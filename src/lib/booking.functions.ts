@@ -32,37 +32,37 @@ export const submitBooking = createServerFn({ method: "POST" })
     const total = pkg.price + addOnsTotal + SETUP_FEE;
 
     const { supabase, userId } = await createOptionalUserClient();
+    // Guests are insert-only under RLS, so avoid RETURNING: generate ids here.
     const reference = makeReference("WW");
+    const createdAt = new Date().toISOString();
 
-    const { data: booking, error } = await supabase
-      .from("bookings")
-      .insert({
-        reference,
-        user_id: userId,
-        service_slug: service.slug,
-        service_name: service.name,
-        package_id: pkg.id,
-        package_name: pkg.name,
-        add_on_ids: addOns.map((a) => a.id),
-        package_price: pkg.price,
-        add_ons_total: addOnsTotal,
-        setup_fee: SETUP_FEE,
-        total,
-        name: data.name,
-        email: data.email.toLowerCase(),
-        phone: data.phone,
-        company: data.company,
-        deadline: data.deadline,
-        details: data.details,
-        status: "new",
-      })
-      .select("reference, created_at")
-      .single();
+    const { error } = await supabase.from("bookings").insert({
+      id: crypto.randomUUID(),
+      reference,
+      user_id: userId,
+      service_slug: service.slug,
+      service_name: service.name,
+      package_id: pkg.id,
+      package_name: pkg.name,
+      add_on_ids: addOns.map((a) => a.id),
+      package_price: pkg.price,
+      add_ons_total: addOnsTotal,
+      setup_fee: SETUP_FEE,
+      total,
+      name: data.name,
+      email: data.email.toLowerCase(),
+      phone: data.phone,
+      company: data.company,
+      deadline: data.deadline,
+      details: data.details,
+      status: "new",
+      created_at: createdAt,
+    });
     if (error) throw new Error(error.message);
 
     return {
-      reference: booking.reference,
-      receivedAt: booking.created_at,
+      reference,
+      receivedAt: createdAt,
       total,
       linkedToAccount: Boolean(userId),
     };

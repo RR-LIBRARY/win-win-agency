@@ -29,31 +29,33 @@ export const placeOrder = createServerFn({ method: "POST" })
     if (templateError) throw new Error(templateError.message);
     if (!template) throw new Error("This template is no longer available");
 
+    // Guests have insert-only access (no read policy), so RETURNING would be
+    // rejected by RLS. Generate the identifiers here and insert without a select.
+    const id = crypto.randomUUID();
     const reference = makeReference("WWT");
-    const { data: order, error } = await supabase
-      .from("orders")
-      .insert({
-        reference,
-        user_id: userId,
-        template_id: template.id,
-        template_title: template.title,
-        amount: template.price,
-        buyer_name: data.name,
-        buyer_email: data.email.toLowerCase(),
-        buyer_phone: data.phone,
-        note: data.note,
-        status: "pending_payment",
-      })
-      .select("id, reference, amount, template_title, created_at")
-      .single();
+    const createdAt = new Date().toISOString();
+    const { error } = await supabase.from("orders").insert({
+      id,
+      reference,
+      user_id: userId,
+      template_id: template.id,
+      template_title: template.title,
+      amount: template.price,
+      buyer_name: data.name,
+      buyer_email: data.email.toLowerCase(),
+      buyer_phone: data.phone,
+      note: data.note,
+      status: "pending_payment",
+      created_at: createdAt,
+    });
     if (error) throw new Error(error.message);
 
     return {
-      id: order.id,
-      reference: order.reference,
-      amount: order.amount,
-      title: order.template_title,
-      createdAt: order.created_at,
+      id,
+      reference,
+      amount: template.price,
+      title: template.title,
+      createdAt,
       linkedToAccount: Boolean(userId),
     };
   });
