@@ -1,26 +1,36 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Check } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowRight, ArrowUpRight, Check, ExternalLink } from "lucide-react";
 import heroImage from "@/assets/hero-workspace.jpg";
 import { services, formatPrice } from "@/data/services";
 import { projects } from "@/data/projects";
+import { templatesQuery } from "@/lib/templates.functions";
+import { siteSettingsQuery } from "@/lib/settings.functions";
+import { TemplateCard } from "@/components/store/TemplateCard";
 
 export const Route = createFileRoute("/")({
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(templatesQuery),
+      context.queryClient.ensureQueryData(siteSettingsQuery),
+    ]);
+  },
   head: () => ({
     meta: [
-      { title: "Win Win Digital Agency — Websites, Apps & Stores That Earn" },
+      { title: "Win Win Digital Agency — Websites, Apps, EdTech & Notion Templates" },
       {
         name: "description",
         content:
-          "We build software websites, mobile and web apps, Notion templates, ecommerce stores, landing pages and learning platforms. Book your project with a clear price.",
+          "We build websites, apps and EdTech systems for coaching centres, sell ready-to-use Notion templates, and offer software consulting and secure PDF storage. Fixed packages, clear prices in INR.",
       },
       {
         property: "og:title",
-        content: "Win Win Digital Agency — Websites, Apps & Stores That Earn",
+        content: "Win Win Digital Agency — Websites, Apps, EdTech & Notion Templates",
       },
       {
         property: "og:description",
         content:
-          "A small studio building websites, apps, stores and learning platforms with fixed packages and clear timelines.",
+          "A small studio that ships: fixed packages for websites, apps and coaching-centre software, plus a Notion template store.",
       },
     ],
   }),
@@ -34,8 +44,26 @@ const steps = [
   { n: "04", title: "Launch and handover", text: "We ship it, then show you how to run it yourself." },
 ];
 
+const edtechModules = [
+  "Courses, batches and timetable",
+  "Student admissions and profiles",
+  "Fee collection, dues and receipts",
+  "Attendance with parent updates",
+  "Tests, marks and report cards",
+  "Study material and PDF notes",
+  "Notices and announcements",
+  "WhatsApp enquiry and follow-ups",
+];
+
 function Home() {
   const featured = projects.slice(0, 3);
+  const { data: templates } = useSuspenseQuery(templatesQuery);
+  const { data: settings } = useSuspenseQuery(siteSettingsQuery);
+  const featuredTemplates = [...templates]
+    .sort((a, b) => Number(b.is_featured) - Number(a.is_featured))
+    .slice(0, 3);
+  const edtech = services.find((s) => s.slug === "educational-projects");
+  const edtechFrom = edtech ? Math.min(...edtech.packages.map((p) => p.price)) : 0;
 
   return (
     <>
@@ -49,31 +77,31 @@ function Home() {
               We build the thing that makes you money.
             </h1>
             <p className="mt-5 max-w-lg text-base text-muted-foreground md:text-lg">
-              Software websites, apps, Notion templates, ecommerce stores, landing pages and learning
-              platforms — priced in packages, delivered on dates we actually keep.
+              Websites, apps and coaching-centre software built to fixed packages — plus a store of
+              Notion templates you can buy and start using today.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/book"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Book your work <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/portfolio"
-                className="inline-flex items-center rounded-full border border-border px-5 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                to="/templates"
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
               >
-                See our work
+                Shop Notion templates
               </Link>
             </div>
             <dl className="mt-10 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-6">
               {[
-                ["48 hrs", "Kickoff time"],
-                ["60+", "Projects shipped"],
-                ["6", "Service lines"],
+                ["6", "service lines"],
+                ["2 min", "to book with a price"],
+                ["INR", "clear package pricing"],
               ].map(([value, label]) => (
                 <div key={label}>
-                  <dt className="font-display text-xl font-semibold text-foreground">{value}</dt>
+                  <dt className="font-display text-2xl font-semibold text-foreground">{value}</dt>
                   <dd className="mt-1 text-xs text-muted-foreground">{label}</dd>
                 </div>
               ))}
@@ -130,6 +158,86 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <section className="border-b border-border">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+          <div className="grid gap-10 rounded-3xl border border-border bg-card p-8 md:grid-cols-[1.1fr_1fr] md:p-12">
+            <div>
+              <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
+                Our specialty
+              </p>
+              <h2 className="mt-3 font-display text-2xl font-semibold text-foreground md:text-3xl">
+                EdTech apps for coaching centres and tuition classes.
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                Admissions, batches, fees, attendance, tests and study material — one system your
+                staff can run from a phone, and parents can trust. Built many times, so yours ships
+                fast.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href={settings.edutech_demo_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  {settings.edutech_demo_label} <ExternalLink className="h-4 w-4" />
+                </a>
+                <Link
+                  to="/book"
+                  search={{ service: "educational-projects" }}
+                  className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                >
+                  Book an EdTech project
+                </Link>
+              </div>
+              {edtechFrom ? (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Packages from {formatPrice(edtechFrom)} plus a one-time setup charge.
+                </p>
+              ) : null}
+            </div>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {edtechModules.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-2 rounded-xl border border-border bg-secondary/60 px-4 py-3 text-sm text-foreground"
+                >
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {featuredTemplates.length > 0 ? (
+        <section className="border-b border-border bg-secondary/50">
+          <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
+                  Template store
+                </p>
+                <h2 className="mt-2 font-display text-2xl font-semibold text-foreground md:text-3xl">
+                  Notion systems you can start using tonight
+                </h2>
+              </div>
+              <Link
+                to="/templates"
+                className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+              >
+                Browse all templates <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredTemplates.map((template) => (
+                <TemplateCard key={template.id} template={template} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
