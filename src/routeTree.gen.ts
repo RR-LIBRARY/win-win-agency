@@ -32,6 +32,8 @@ import { Route as AuthenticatedAccountOrdersRouteImport } from './routes/_authen
 import { Route as AuthenticatedAccountProfileRouteImport } from './routes/_authenticated/account/profile'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
+import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated/admin/coupons'
+import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin/orders'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin/team'
@@ -158,6 +160,18 @@ const AuthenticatedAdminBookingsRoute =
     path: '/bookings',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminCouponsRoute =
+  AuthenticatedAdminCouponsRouteImport.update({
+    id: '/coupons',
+    path: '/coupons',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminMessagesRoute =
+  AuthenticatedAdminMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminOrdersRoute =
   AuthenticatedAdminOrdersRouteImport.update({
     id: '/orders',
@@ -209,6 +223,8 @@ export interface FileRoutesByFullPath {
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
@@ -234,6 +250,8 @@ export interface FileRoutesByTo {
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/account/profile': typeof AuthenticatedAccountProfileRoute
   '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
@@ -265,6 +283,8 @@ export interface FileRoutesById {
   '/_authenticated/account/orders': typeof AuthenticatedAccountOrdersRoute
   '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
   '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
@@ -296,6 +316,8 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/profile'
     | '/admin/bookings'
+    | '/admin/coupons'
+    | '/admin/messages'
     | '/admin/orders'
     | '/admin/settings'
     | '/admin/team'
@@ -321,6 +343,8 @@ export interface FileRouteTypes {
     | '/account/orders'
     | '/account/profile'
     | '/admin/bookings'
+    | '/admin/coupons'
+    | '/admin/messages'
     | '/admin/orders'
     | '/admin/settings'
     | '/admin/team'
@@ -351,6 +375,8 @@ export interface FileRouteTypes {
     | '/_authenticated/account/orders'
     | '/_authenticated/account/profile'
     | '/_authenticated/admin/bookings'
+    | '/_authenticated/admin/coupons'
+    | '/_authenticated/admin/messages'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
@@ -537,6 +563,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBookingsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/coupons': {
+      id: '/_authenticated/admin/coupons'
+      path: '/coupons'
+      fullPath: '/admin/coupons'
+      preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/messages': {
+      id: '/_authenticated/admin/messages'
+      path: '/messages'
+      fullPath: '/admin/messages'
+      preLoaderRoute: typeof AuthenticatedAdminMessagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/orders': {
       id: '/_authenticated/admin/orders'
       path: '/orders'
@@ -597,6 +637,8 @@ const AuthenticatedAccountRouteRouteWithChildren =
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminBookingsRoute: typeof AuthenticatedAdminBookingsRoute
+  AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
+  AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
@@ -608,6 +650,8 @@ interface AuthenticatedAdminRouteRouteChildren {
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminBookingsRoute: AuthenticatedAdminBookingsRoute,
+    AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
+    AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
     AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
