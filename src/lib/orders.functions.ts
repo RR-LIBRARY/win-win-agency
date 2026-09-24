@@ -155,7 +155,7 @@ export const adminUpdateOrder = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("orders").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
 
-    if (data.status === "delivered" && existing.status !== "delivered") {
+    if (justDelivered) {
       const { data: template } = await context.supabase
         .from("templates")
         .select("sales_count")
