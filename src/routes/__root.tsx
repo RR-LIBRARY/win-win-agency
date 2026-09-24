@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { siteSettingsQuery } from "@/lib/settings.functions";
 
 function NotFoundComponent() {
   return (
@@ -76,6 +77,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: ({ context }) => context.queryClient.ensureQueryData(siteSettingsQuery),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -84,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Win Win Digital Agency builds software websites, apps, Notion templates, ecommerce stores, landing pages and learning platforms.",
+          "Win Win Digital Agency builds websites, apps and EdTech systems for coaching centres, sells Notion templates, and offers software consulting and PDF storage.",
       },
       { name: "author", content: "Win Win Digital Agency" },
       { property: "og:type", content: "website" },

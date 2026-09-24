@@ -1,9 +1,9 @@
 # Win Win Digital Agency — Roadmap
 
 ## In progress
-- [ ] Workspace moved again (16:02 UTC): re-connect Parallel + Perplexity in the new workspace; re-verify Supabase link
-- [ ] Research (Parallel + Perplexity): Gumroad/Fiverr-style template marketplace UX, Notion template pricing, EdTech-for-coaching features
-- [ ] Connect user's own Supabase project "Win Win Agency" (user request 15:14 UTC) — verify link, then build DB-backed features on it
+- [x] Workspace moved again (16:02 UTC): Parallel + Perplexity re-connected; Supabase "Win Win Agency" link re-verified (16:05 UTC)
+- [x] Research (Parallel + Perplexity): Gumroad/Fiverr-style template marketplace UX, Notion template pricing, EdTech-for-coaching features
+- [x] Connect user's own Supabase project "Win Win Agency" — linked, schema + seed applied
 - [ ] Update service lines: Website, Apps, Educational Projects (EdTech demo link editable from admin), Notion Templates, Software Consulting, PDF Storage
 - [ ] Notion template marketplace (Gumroad-style): listing, filters, detail page, buy/order flow
 - [ ] Auth (sign up / sign in) + user panel (my orders, my bookings)
