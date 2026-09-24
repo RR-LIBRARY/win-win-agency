@@ -23,8 +23,8 @@ export const Route = createFileRoute("/pricing")({
 });
 
 function PricingPage() {
-  const [activeSlug, setActiveSlug] = useState(services[0].slug);
-  const active = services.find((s) => s.slug === activeSlug) ?? services[0];
+  const [activeSlug, setActiveSlug] = useState(services[0]!.slug);
+  const active = services.find((s) => s.slug === activeSlug) ?? services[0]!;
 
   return (
     <>

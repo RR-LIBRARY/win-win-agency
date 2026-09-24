@@ -11,12 +11,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { services, addOns, formatPrice, SETUP_FEE } from "@/data/services";
 import { submitBooking } from "@/lib/booking.functions";
 
-type BookSearch = { service?: string; pkg?: string };
+type BookSearch = { service?: string | undefined; pkg?: string | undefined };
 
 export const Route = createFileRoute("/book")({
   validateSearch: (search: Record<string, unknown>): BookSearch => ({
-    service: typeof search.service === "string" ? search.service : undefined,
-    pkg: typeof search.pkg === "string" ? search.pkg : undefined,
+    service: typeof search["service"] === "string" ? search["service"] : undefined,
+    pkg: typeof search["pkg"] === "string" ? search["pkg"] : undefined,
   }),
   head: () => ({
     meta: [
@@ -43,9 +43,9 @@ function BookPage() {
   const initialService =
     services.find((s) => s.slug === search.service) ??
     services.find((s) => s.packages.some((p) => p.id === search.pkg)) ??
-    services[0];
+    services[0]!;
   const initialPackage =
-    initialService.packages.find((p) => p.id === search.pkg) ?? initialService.packages[0];
+    initialService.packages.find((p) => p.id === search.pkg) ?? initialService.packages[0]!;
 
   const [serviceSlug, setServiceSlug] = useState(initialService.slug);
   const [packageId, setPackageId] = useState(initialPackage.id);
@@ -53,8 +53,8 @@ function BookPage() {
   const [busy, setBusy] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
 
-  const service = services.find((s) => s.slug === serviceSlug) ?? services[0];
-  const pkg = service.packages.find((p) => p.id === packageId) ?? service.packages[0];
+  const service = services.find((s) => s.slug === serviceSlug) ?? services[0]!;
+  const pkg = service.packages.find((p) => p.id === packageId) ?? service.packages[0]!;
 
   const addOnTotal = useMemo(
     () =>
@@ -69,7 +69,7 @@ function BookPage() {
     const next = services.find((s) => s.slug === slug);
     if (!next) return;
     setServiceSlug(slug);
-    setPackageId(next.packages[0].id);
+    setPackageId(next.packages[0]!.id);
   }
 
   function toggleAddOn(id: string) {
