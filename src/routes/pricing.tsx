@@ -10,7 +10,7 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Transparent package pricing for websites, apps, Notion templates, ecommerce stores, landing pages and learning platforms, including the one-time setup charge.",
+          "Transparent package pricing for websites, apps, EdTech projects, Notion templates, software consulting and PDF storage, including the one-time setup charge.",
       },
       { property: "og:title", content: "Pricing — Win Win Digital Agency" },
       {
