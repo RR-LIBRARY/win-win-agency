@@ -1,7 +1,7 @@
 # Win Win Digital Agency — Roadmap
 
 ## In progress
-- [x] Workspace moved again (16:02 UTC): Parallel + Perplexity re-connected; Supabase "Win Win Agency" link re-verified (16:05 UTC)
+- [ ] Workspace moved again (16:15 UTC): re-connect Parallel + Perplexity; re-verify Supabase "Win Win Agency" link
 - [x] Research (Parallel + Perplexity): Gumroad/Fiverr-style template marketplace UX, Notion template pricing, EdTech-for-coaching features
 - [x] Connect user's own Supabase project "Win Win Agency" — linked, schema + seed applied
 - [ ] Update service lines: Website, Apps, Educational Projects (EdTech demo link editable from admin), Notion Templates, Software Consulting, PDF Storage
