@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { services, addOns, formatPrice, SETUP_FEE } from "@/data/services";
 import { submitBooking } from "@/lib/booking.functions";
+import { useAuth } from "@/hooks/useAuth";
 
 type BookSearch = { service?: string | undefined; pkg?: string | undefined };
 
@@ -39,6 +40,8 @@ export const Route = createFileRoute("/book")({
 function BookPage() {
   const search = Route.useSearch();
   const send = useServerFn(submitBooking);
+  const auth = useAuth();
+  const userMeta = (auth.user?.user_metadata ?? {}) as { full_name?: string; phone?: string };
 
   const initialService =
     services.find((s) => s.slug === search.service) ??
@@ -52,6 +55,7 @@ function BookPage() {
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
+  const [linkedToAccount, setLinkedToAccount] = useState(false);
 
   const service = services.find((s) => s.slug === serviceSlug) ?? services[0]!;
   const pkg = service.packages.find((p) => p.id === packageId) ?? service.packages[0]!;
@@ -98,6 +102,7 @@ function BookPage() {
         },
       });
       setReference(result.reference);
+      setLinkedToAccount(result.linkedToAccount);
       toast.success("Booking received", { description: `Reference ${result.reference}` });
     } catch {
       toast.error("That did not go through", {
@@ -125,14 +130,32 @@ function BookPage() {
                 We will email and WhatsApp you within one working day to confirm scope and book the
                 kickoff call. The payment link comes after that call.
               </p>
+              {linkedToAccount ? (
+                <p>This booking is saved to your account — track its status any time.</p>
+              ) : (
+                <p>
+                  Want to track it online? Create an account with the same email and this booking
+                  will show up under My bookings.
+                </p>
+              )}
             </div>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                to="/portfolio"
-                className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                Browse our work meanwhile
-              </Link>
+              {linkedToAccount ? (
+                <Link
+                  to="/account/bookings"
+                  className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Track in My account
+                </Link>
+              ) : (
+                <Link
+                  to="/auth"
+                  search={{ mode: "signup", redirect: "/account/bookings" }}
+                  className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Create an account to track it
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={() => setReference(null)}
@@ -252,14 +275,35 @@ function BookPage() {
               </div>
             </section>
 
-            <section>
-              <h2 className="font-display text-lg font-semibold text-foreground">
-                4. Your details
-              </h2>
+            <section key={auth.user?.id ?? "guest"}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="font-display text-lg font-semibold text-foreground">
+                  4. Your details
+                </h2>
+                {auth.user ? (
+                  <span className="text-xs text-muted-foreground">
+                    Booking as {auth.displayName || auth.user.email} — saved to your account
+                  </span>
+                ) : (
+                  <Link
+                    to="/auth"
+                    search={{ redirect: "/book" }}
+                    className="text-xs font-medium text-primary hover:underline"
+                  >
+                    Sign in to track this booking
+                  </Link>
+                )}
+              </div>
               <div className="mt-4 grid gap-5 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full name</Label>
-                  <Input id="name" name="name" required placeholder="Your name" />
+                  <Input
+                    id="name"
+                    name="name"
+                    required
+                    placeholder="Your name"
+                    defaultValue={userMeta.full_name ?? ""}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -269,11 +313,18 @@ function BookPage() {
                     type="email"
                     required
                     placeholder="you@example.com"
+                    defaultValue={auth.user?.email ?? ""}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone or WhatsApp</Label>
-                  <Input id="phone" name="phone" required placeholder="+91" />
+                  <Input
+                    id="phone"
+                    name="phone"
+                    required
+                    placeholder="+91"
+                    defaultValue={userMeta.phone ?? ""}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="company">Business name (optional)</Label>
