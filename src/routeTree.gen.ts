@@ -10,18 +10,33 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookRouteImport } from './routes/book'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as TemplatesRouteImport } from './routes/templates'
+import { Route as AuthenticatedAccountRouteRouteImport } from './routes/_authenticated/account/route'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as PortfolioSlugRouteImport } from './routes/portfolio.$slug'
+import { Route as TemplatesIndexRouteImport } from './routes/templates.index'
+import { Route as TemplatesSlugRouteImport } from './routes/templates.$slug'
+import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
+import { Route as AuthenticatedAccountBookingsRouteImport } from './routes/_authenticated/account/bookings'
+import { Route as AuthenticatedAccountOrdersRouteImport } from './routes/_authenticated/account/orders'
+import { Route as AuthenticatedAccountProfileRouteImport } from './routes/_authenticated/account/profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -29,9 +44,19 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookRoute = BookRouteImport.update({
   id: '/book',
   path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -54,6 +79,17 @@ const ServicesRoute = ServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TemplatesRoute = TemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRouteRoute =
+  AuthenticatedAccountRouteRouteImport.update({
+    id: '/account',
+    path: '/account',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -64,83 +100,179 @@ const PortfolioSlugRoute = PortfolioSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => PortfolioRoute,
 } as any)
+const TemplatesIndexRoute = TemplatesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TemplatesRoute,
+} as any)
+const TemplatesSlugRoute = TemplatesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TemplatesRoute,
+} as any)
+const AuthenticatedAccountIndexRoute =
+  AuthenticatedAccountIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAccountRouteRoute,
+  } as any)
+const AuthenticatedAccountBookingsRoute =
+  AuthenticatedAccountBookingsRouteImport.update({
+    id: '/bookings',
+    path: '/bookings',
+    getParentRoute: () => AuthenticatedAccountRouteRoute,
+  } as any)
+const AuthenticatedAccountOrdersRoute =
+  AuthenticatedAccountOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedAccountRouteRoute,
+  } as any)
+const AuthenticatedAccountProfileRoute =
+  AuthenticatedAccountProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedAccountRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/book': typeof BookRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRoute
+  '/templates': typeof TemplatesRouteWithChildren
+  '/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/templates/$slug': typeof TemplatesSlugRoute
   '/portfolio/': typeof PortfolioIndexRoute
+  '/templates/': typeof TemplatesIndexRoute
+  '/account/bookings': typeof AuthenticatedAccountBookingsRoute
+  '/account/orders': typeof AuthenticatedAccountOrdersRoute
+  '/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/book': typeof BookRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/templates/$slug': typeof TemplatesSlugRoute
   '/portfolio': typeof PortfolioIndexRoute
+  '/templates': typeof TemplatesIndexRoute
+  '/account/bookings': typeof AuthenticatedAccountBookingsRoute
+  '/account/orders': typeof AuthenticatedAccountOrdersRoute
+  '/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/account': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/book': typeof BookRoute
+  '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRoute
+  '/templates': typeof TemplatesRouteWithChildren
+  '/_authenticated/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/templates/$slug': typeof TemplatesSlugRoute
   '/portfolio/': typeof PortfolioIndexRoute
+  '/templates/': typeof TemplatesIndexRoute
+  '/_authenticated/account/bookings': typeof AuthenticatedAccountBookingsRoute
+  '/_authenticated/account/orders': typeof AuthenticatedAccountOrdersRoute
+  '/_authenticated/account/profile': typeof AuthenticatedAccountProfileRoute
+  '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/auth'
     | '/book'
+    | '/checkout'
     | '/contact'
     | '/portfolio'
     | '/pricing'
     | '/services'
+    | '/templates'
+    | '/account'
     | '/portfolio/$slug'
+    | '/templates/$slug'
     | '/portfolio/'
+    | '/templates/'
+    | '/account/bookings'
+    | '/account/orders'
+    | '/account/profile'
+    | '/account/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/auth'
     | '/book'
+    | '/checkout'
     | '/contact'
     | '/pricing'
     | '/services'
     | '/portfolio/$slug'
+    | '/templates/$slug'
     | '/portfolio'
+    | '/templates'
+    | '/account/bookings'
+    | '/account/orders'
+    | '/account/profile'
+    | '/account'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
+    | '/auth'
     | '/book'
+    | '/checkout'
     | '/contact'
     | '/portfolio'
     | '/pricing'
     | '/services'
+    | '/templates'
+    | '/_authenticated/account'
     | '/portfolio/$slug'
+    | '/templates/$slug'
     | '/portfolio/'
+    | '/templates/'
+    | '/_authenticated/account/bookings'
+    | '/_authenticated/account/orders'
+    | '/_authenticated/account/profile'
+    | '/_authenticated/account/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   BookRoute: typeof BookRoute
+  CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   PortfolioRoute: typeof PortfolioRouteWithChildren
   PricingRoute: typeof PricingRoute
   ServicesRoute: typeof ServicesRoute
+  TemplatesRoute: typeof TemplatesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -159,11 +298,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/book': {
       id: '/book'
       path: '/book'
       fullPath: '/book'
       preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -194,6 +347,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/templates': {
+      id: '/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof TemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/portfolio/': {
       id: '/portfolio/'
       path: '/'
@@ -208,8 +375,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortfolioSlugRouteImport
       parentRoute: typeof PortfolioRoute
     }
+    '/templates/': {
+      id: '/templates/'
+      path: '/'
+      fullPath: '/templates/'
+      preLoaderRoute: typeof TemplatesIndexRouteImport
+      parentRoute: typeof TemplatesRoute
+    }
+    '/templates/$slug': {
+      id: '/templates/$slug'
+      path: '/$slug'
+      fullPath: '/templates/$slug'
+      preLoaderRoute: typeof TemplatesSlugRouteImport
+      parentRoute: typeof TemplatesRoute
+    }
+    '/_authenticated/account/': {
+      id: '/_authenticated/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
+      parentRoute: typeof AuthenticatedAccountRouteRoute
+    }
+    '/_authenticated/account/bookings': {
+      id: '/_authenticated/account/bookings'
+      path: '/bookings'
+      fullPath: '/account/bookings'
+      preLoaderRoute: typeof AuthenticatedAccountBookingsRouteImport
+      parentRoute: typeof AuthenticatedAccountRouteRoute
+    }
+    '/_authenticated/account/orders': {
+      id: '/_authenticated/account/orders'
+      path: '/orders'
+      fullPath: '/account/orders'
+      preLoaderRoute: typeof AuthenticatedAccountOrdersRouteImport
+      parentRoute: typeof AuthenticatedAccountRouteRoute
+    }
+    '/_authenticated/account/profile': {
+      id: '/_authenticated/account/profile'
+      path: '/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof AuthenticatedAccountProfileRouteImport
+      parentRoute: typeof AuthenticatedAccountRouteRoute
+    }
   }
 }
+
+interface AuthenticatedAccountRouteRouteChildren {
+  AuthenticatedAccountBookingsRoute: typeof AuthenticatedAccountBookingsRoute
+  AuthenticatedAccountOrdersRoute: typeof AuthenticatedAccountOrdersRoute
+  AuthenticatedAccountProfileRoute: typeof AuthenticatedAccountProfileRoute
+  AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+}
+
+const AuthenticatedAccountRouteRouteChildren: AuthenticatedAccountRouteRouteChildren =
+  {
+    AuthenticatedAccountBookingsRoute: AuthenticatedAccountBookingsRoute,
+    AuthenticatedAccountOrdersRoute: AuthenticatedAccountOrdersRoute,
+    AuthenticatedAccountProfileRoute: AuthenticatedAccountProfileRoute,
+    AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+  }
+
+const AuthenticatedAccountRouteRouteWithChildren =
+  AuthenticatedAccountRouteRoute._addFileChildren(
+    AuthenticatedAccountRouteRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRouteRoute: typeof AuthenticatedAccountRouteRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRouteRoute: AuthenticatedAccountRouteRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface PortfolioRouteChildren {
   PortfolioSlugRoute: typeof PortfolioSlugRoute
@@ -225,14 +465,32 @@ const PortfolioRouteWithChildren = PortfolioRoute._addFileChildren(
   PortfolioRouteChildren,
 )
 
+interface TemplatesRouteChildren {
+  TemplatesSlugRoute: typeof TemplatesSlugRoute
+  TemplatesIndexRoute: typeof TemplatesIndexRoute
+}
+
+const TemplatesRouteChildren: TemplatesRouteChildren = {
+  TemplatesSlugRoute: TemplatesSlugRoute,
+  TemplatesIndexRoute: TemplatesIndexRoute,
+}
+
+const TemplatesRouteWithChildren = TemplatesRoute._addFileChildren(
+  TemplatesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   BookRoute: BookRoute,
+  CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   PortfolioRoute: PortfolioRouteWithChildren,
   PricingRoute: PricingRoute,
   ServicesRoute: ServicesRoute,
+  TemplatesRoute: TemplatesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
