@@ -54,7 +54,7 @@ function AboutPage() {
       <PageHeader
         eyebrow="About"
         title="A small studio that would rather ship than pitch."
-        subtitle="Win Win Digital Agency builds websites, apps, stores and learning platforms for founders, local businesses and institutes who need the thing working, not a deck about it."
+        subtitle="Win Win Digital Agency builds websites, apps, coaching-centre software and Notion systems for founders, local businesses and institutes who need the thing working, not a deck about it."
       />
 
       <div className="mx-auto max-w-6xl px-5 py-14 md:py-20">

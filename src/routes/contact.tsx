@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Mail, MessageCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
@@ -6,15 +7,17 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { siteSettingsQuery } from "@/lib/settings.functions";
 
 export const Route = createFileRoute("/contact")({
+  loader: ({ context }) => context.queryClient.ensureQueryData(siteSettingsQuery),
   head: () => ({
     meta: [
       { title: "Contact Win Win Digital Agency" },
       {
         name: "description",
         content:
-          "Ask a question about a website, app, store or learning platform. We reply within one working day, Monday to Saturday.",
+          "Ask a question about a website, app, Notion template or coaching-centre platform. We reply within one working day, Monday to Saturday.",
       },
       { property: "og:title", content: "Contact Win Win Digital Agency" },
       {
@@ -28,6 +31,7 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const { data: settings } = useSuspenseQuery(siteSettingsQuery);
 
   return (
     <>
@@ -109,23 +113,25 @@ function ContactPage() {
             <h2 className="font-display text-base font-semibold text-foreground">Direct lines</h2>
             <div className="mt-4 space-y-3 text-sm">
               <a
-                href="mailto:hello@winwindigital.example"
+                href={`mailto:${settings.contact_email}`}
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
-                <Mail className="h-4 w-4 text-primary" /> hello@winwindigital.example
+                <Mail className="h-4 w-4 text-primary" /> {settings.contact_email}
               </a>
               <a
-                href="https://wa.me/910000000000"
+                href={`https://wa.me/${settings.contact_whatsapp}`}
+                target="_blank"
+                rel="noreferrer"
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 <MessageCircle className="h-4 w-4 text-primary" /> WhatsApp
               </a>
               <p className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-4 w-4 text-primary" /> Mon-Sat, 10am - 7pm IST
+                <Clock className="h-4 w-4 text-primary" /> {settings.business_hours}
               </p>
             </div>
             <p className="mt-4 text-xs text-muted-foreground">
-              Sample contact details — send us your real email and number and we will put them in.
+              These details are editable from the admin panel under Site settings.
             </p>
           </div>
 

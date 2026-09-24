@@ -11,7 +11,7 @@ export const Route = createFileRoute("/portfolio/")({
       {
         name: "description",
         content:
-          "Websites, apps, Notion systems, stores, landing pages and learning portals we have designed and shipped, with the results each one delivered.",
+          "Websites, apps, Notion systems and coaching-centre platforms we have designed and shipped, with the results each one delivered.",
       },
       { property: "og:title", content: "Project Showcase — Win Win Digital Agency" },
       {
@@ -32,7 +32,7 @@ function PortfolioPage() {
       <PageHeader
         eyebrow="Showcase"
         title="Work we are happy to be judged on."
-        subtitle="Six projects across our six service lines — what the client was stuck with, what we built, and what changed afterwards."
+        subtitle="Six projects across our service lines — what the client was stuck with, what we built, and what changed afterwards."
       />
 
       <div className="mx-auto max-w-6xl px-5 py-14 md:py-20">
