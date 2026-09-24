@@ -89,6 +89,75 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_read: boolean
+          message: string
+          name: string
+          phone: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_read?: boolean
+          message: string
+          name: string
+          phone?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          max_uses: number | null
+          updated_at: string
+          used_count: number
+          value: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          max_uses?: number | null
+          updated_at?: string
+          used_count?: number
+          value: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          max_uses?: number | null
+          updated_at?: string
+          used_count?: number
+          value?: number
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           admin_note: string
@@ -96,8 +165,10 @@ export type Database = {
           buyer_email: string
           buyer_name: string
           buyer_phone: string
+          coupon_code: string
           created_at: string
           delivered_at: string | null
+          discount: number
           id: string
           note: string
           payment_reference: string
@@ -114,8 +185,10 @@ export type Database = {
           buyer_email: string
           buyer_name: string
           buyer_phone?: string
+          coupon_code?: string
           created_at?: string
           delivered_at?: string | null
+          discount?: number
           id?: string
           note?: string
           payment_reference?: string
@@ -132,8 +205,10 @@ export type Database = {
           buyer_email?: string
           buyer_name?: string
           buyer_phone?: string
+          coupon_code?: string
           created_at?: string
           delivered_at?: string | null
+          discount?: number
           id?: string
           note?: string
           payment_reference?: string
