@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 export type PanelNavItem = {
-  to: LinkProps["to"];
+  to: NonNullable<LinkProps["to"]>;
   label: string;
   icon: LucideIcon;
   exact?: boolean;

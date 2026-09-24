@@ -144,14 +144,13 @@ export const adminUpdateOrder = createServerFn({ method: "POST" })
     if (readError) throw new Error(readError.message);
     if (!existing) throw new Error("Order not found");
 
-    const patch: Record<string, unknown> = {
+    const justDelivered = data.status === "delivered" && existing.status !== "delivered";
+    const patch = {
       status: data.status,
       payment_reference: data.payment_reference.trim(),
       admin_note: data.admin_note.trim(),
+      ...(justDelivered ? { delivered_at: new Date().toISOString() } : {}),
     };
-    if (data.status === "delivered" && existing.status !== "delivered") {
-      patch["delivered_at"] = new Date().toISOString();
-    }
 
     const { error } = await context.supabase.from("orders").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
