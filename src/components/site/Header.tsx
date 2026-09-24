@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, ShieldCheck, UserRound, X } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const nav = [
   { to: "/services", label: "Services" },
+  { to: "/templates", label: "Templates" },
   { to: "/portfolio", label: "Work" },
   { to: "/pricing", label: "Pricing" },
   { to: "/about", label: "About" },
@@ -12,6 +14,26 @@ const nav = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const auth = useAuth();
+
+  const accountLink = auth.user ? (
+    <Link
+      to={auth.isAdmin ? "/admin" : "/account"}
+      onClick={() => setOpen(false)}
+      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+    >
+      {auth.isAdmin ? <ShieldCheck className="h-4 w-4 text-primary" /> : <UserRound className="h-4 w-4" />}
+      {auth.isAdmin ? "Admin" : "Account"}
+    </Link>
+  ) : (
+    <Link
+      to="/auth"
+      onClick={() => setOpen(false)}
+      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+    >
+      <UserRound className="h-4 w-4" /> Sign in
+    </Link>
+  );
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur">
@@ -25,7 +47,7 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-6 md:flex">
           {nav.map((item) => (
             <Link
               key={item.to}
@@ -39,6 +61,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <span className="hidden md:inline-flex">{auth.loading ? null : accountLink}</span>
           <Link
             to="/book"
             className="hidden rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:inline-flex"
@@ -70,13 +93,16 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
-            <Link
-              to="/book"
-              onClick={() => setOpen(false)}
-              className="mt-3 mb-2 inline-flex justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
-            >
-              Book your work
-            </Link>
+            <div className="mt-3 mb-2 flex flex-col gap-2">
+              {auth.loading ? null : accountLink}
+              <Link
+                to="/book"
+                onClick={() => setOpen(false)}
+                className="inline-flex justify-center rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+              >
+                Book your work
+              </Link>
+            </div>
           </nav>
         </div>
       ) : null}
