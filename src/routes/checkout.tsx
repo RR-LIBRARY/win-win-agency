@@ -12,6 +12,7 @@ import { formatPrice } from "@/data/services";
 import { templateCover } from "@/data/template-covers";
 import { useAuth } from "@/hooks/useAuth";
 import { placeOrder } from "@/lib/orders.functions";
+import { checkCoupon } from "@/lib/inbox.functions";
 import { siteSettingsQuery } from "@/lib/settings.functions";
 import { templateQuery } from "@/lib/templates.functions";
 
@@ -78,6 +79,25 @@ function CheckoutForm({ slug }: { slug: string }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [note, setNote] = useState("");
+  const verifyCoupon = useServerFn(checkCoupon);
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
+  const [checking, setChecking] = useState(false);
+
+  async function applyCoupon() {
+    if (!couponInput.trim()) return;
+    setChecking(true);
+    try {
+      const result = await verifyCoupon({ data: { code: couponInput, templateSlug: slug } });
+      setCoupon(result);
+      toast.success(`Coupon applied: ${result.label}`);
+    } catch (error) {
+      setCoupon(null);
+      toast.error(error instanceof Error ? error.message : "Coupon not valid");
+    } finally {
+      setChecking(false);
+    }
+  }
 
   const profileQuery = useQuery({
     queryKey: ["checkout-prefill", auth.user?.id ?? "anon"],
@@ -109,7 +129,7 @@ function CheckoutForm({ slug }: { slug: string }) {
     setBusy(true);
     try {
       const result = await submit({
-        data: { templateSlug: slug, name, email, phone, note },
+        data: { templateSlug: slug, name, email, phone, note, ...(coupon ? { couponCode: coupon.code } : {}) },
       });
       setPlaced(result);
       toast.success("Order placed", { description: `Reference ${result.reference}` });
@@ -255,11 +275,33 @@ function CheckoutForm({ slug }: { slug: string }) {
                   <dt className="text-muted-foreground">Setup charge</dt>
                   <dd className="text-foreground">{formatPrice(0)}</dd>
                 </div>
+                {coupon ? (
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground">Coupon {coupon.code}</dt>
+                    <dd className="text-primary">−{formatPrice(coupon.discount)}</dd>
+                  </div>
+                ) : null}
                 <div className="flex justify-between border-t border-border pt-3">
                   <dt className="font-display font-semibold text-foreground">Total</dt>
-                  <dd className="font-display text-xl font-semibold text-foreground">{formatPrice(template.price)}</dd>
+                  <dd className="font-display text-xl font-semibold text-foreground">{formatPrice(template.price - (coupon?.discount ?? 0))}</dd>
                 </div>
               </dl>
+              <div className="mt-4 flex gap-2">
+                <Input
+                  aria-label="Coupon code"
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                  placeholder="Coupon code"
+                />
+                <button
+                  type="button"
+                  onClick={applyCoupon}
+                  disabled={checking}
+                  className="shrink-0 rounded-full border border-border px-4 text-sm font-medium text-foreground hover:bg-secondary disabled:opacity-60"
+                >
+                  {checking ? "Checking" : "Apply"}
+                </button>
+              </div>
               <button
                 type="submit"
                 disabled={busy}

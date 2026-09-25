@@ -1,8 +1,9 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarCheck, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, Users } from "lucide-react";
+import { Inbox, TicketPercent, CalendarCheck, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, Users } from "lucide-react";
 import { PanelError, PanelLoading, PanelShell, type PanelNavItem } from "@/components/panel/PanelShell";
 import { getMyAccess } from "@/lib/admin.functions";
+import { adminCounts } from "@/lib/inbox.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -16,11 +17,13 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const nav: PanelNavItem[] = [
+const baseNav: PanelNavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/templates", label: "Templates", icon: NotebookPen },
   { to: "/admin/orders", label: "Orders", icon: Package },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
+  { to: "/admin/messages", label: "Messages", icon: Inbox },
+  { to: "/admin/coupons", label: "Coupons", icon: TicketPercent },
   { to: "/admin/settings", label: "Site settings", icon: Settings },
   { to: "/admin/team", label: "Team", icon: Users },
 ];
@@ -28,6 +31,21 @@ const nav: PanelNavItem[] = [
 function AdminLayout() {
   const { user } = Route.useRouteContext();
   const access = useQuery({ queryKey: ["my-access", user.id], queryFn: () => getMyAccess() });
+  const counts = useQuery({
+    queryKey: ["admin-counts"],
+    queryFn: () => adminCounts(),
+    enabled: Boolean(access.data?.isAdmin),
+    refetchInterval: 60_000,
+  });
+  const badges: Record<string, number | undefined> = {
+    "/admin/orders": counts.data?.orders,
+    "/admin/bookings": counts.data?.bookings,
+    "/admin/messages": counts.data?.messages,
+  };
+  const nav = baseNav.map((item) => {
+    const badge = badges[String(item.to)];
+    return badge ? { ...item, badge } : item;
+  });
 
   return (
     <PanelShell
