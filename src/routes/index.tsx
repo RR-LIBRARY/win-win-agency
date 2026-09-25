@@ -39,6 +39,8 @@ export const Route = createFileRoute("/")({
         content:
           "A small studio that ships: fixed packages for websites, apps and coaching-centre software, plus a Notion template store.",
       },
+      { property: "og:image", content: "https://winwinagency.vercel.app/og-image.jpg" },
+      { name: "twitter:image", content: "https://winwinagency.vercel.app/og-image.jpg" },
     ],
   }),
   component: Home,

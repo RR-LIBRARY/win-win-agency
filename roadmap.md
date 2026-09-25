@@ -64,4 +64,4 @@ Constraint: Supabase free tier → no storage uploads; videos/docs are links onl
 - [ ] User chose "later" for real contact email + grievance officer details (placeholder stays live for now).
 
 - [ ] 2026-09-25 re-check: live order still fails with STORE-CONFIG; live webhook returns 503 (Razorpay secret missing in Vercel). Waiting on user Vercel env vars + Redeploy.
-- [ ] Workspace move: re-link Parallel, Perplexity, GitHub; then push assistant change
+- [x] Workspace move: re-link Parallel, Perplexity, GitHub; then push assistant change

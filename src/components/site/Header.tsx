@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Menu, ShieldCheck, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import logoMark from "@/assets/logo-mark-sm.png";
 
 const nav = [
   { to: "/services", label: "Services" },
@@ -40,9 +41,8 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <Link to="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-display text-sm font-bold text-primary-foreground">
-            W
-          </span>
+          <img src={logoMark} alt="" width={32} height={32} className="h-8 w-8" />
+
           <span className="font-display text-base font-semibold tracking-tight text-foreground">
             Win Win <span className="text-muted-foreground">Digital</span>
           </span>

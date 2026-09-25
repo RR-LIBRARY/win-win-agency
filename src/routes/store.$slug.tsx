@@ -61,13 +61,14 @@ export const Route = createFileRoute("/store/$slug")({
       ? `${loaderData.title} — ${productTypeLabel(loaderData.type)} by Win Win Digital`
       : "Product — Win Win Digital";
     const description = loaderData?.tagline ?? "A product from the Win Win Digital software store.";
-    const image =
+    const imgUrl =
       loaderData?.cover && /^https:\/\//.test(loaderData.cover)
-        ? [
-            { property: "og:image", content: loaderData.cover },
-            { name: "twitter:image", content: loaderData.cover },
-          ]
-        : [];
+        ? loaderData.cover
+        : "https://winwinagency.vercel.app/og-image.jpg";
+    const image = [
+      { property: "og:image", content: imgUrl },
+      { name: "twitter:image", content: imgUrl },
+    ];
     return {
       meta: [
         { title },
