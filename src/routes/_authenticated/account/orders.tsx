@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { BookOpen, ExternalLink, MessageCircle } from "lucide-react";
+import { CreditCard, MessageCircle, Receipt } from "lucide-react";
 import { PanelCard, PanelEmpty, PanelError, PanelLoading } from "@/components/panel/PanelShell";
 import { OrderStatusBadge, formatDate } from "@/components/site/StatusBadge";
+import { DeliveryPanel } from "@/components/store/DeliveryPanel";
 import { formatPrice } from "@/data/services";
+import { productTypeLabel } from "@/lib/db-types";
 import { myOrders } from "@/lib/orders.functions";
 import { siteSettingsQuery } from "@/lib/settings.functions";
 
@@ -24,10 +26,10 @@ function MyOrdersPage() {
     return (
       <PanelEmpty
         title="No orders yet"
-        text="Templates you buy will show up here with their duplicate links."
+        text="Software, source code and templates you buy will show up here with downloads and licence keys."
         action={
-          <Link to="/templates" className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground">
-            Browse templates
+          <Link to="/store" className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground">
+            Browse the store
           </Link>
         }
       />
@@ -46,7 +48,9 @@ function MyOrdersPage() {
               <div>
                 <p className="font-display text-base font-semibold text-foreground">{order.template_title}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {order.reference} · ordered {formatDate(order.created_at)} · {formatPrice(order.amount)}
+                  {order.reference} · {productTypeLabel(order.product_type)}
+                  {order.tier_name ? ` · ${order.tier_name}` : ""} · ordered {formatDate(order.created_at)} · {formatPrice(order.amount)}
+                  {order.invoice_number ? ` · Invoice ${order.invoice_number}` : ""}
                 </p>
               </div>
               <OrderStatusBadge status={order.status} />
@@ -54,57 +58,63 @@ function MyOrdersPage() {
 
             {order.status === "pending_payment" ? (
               <div className="mt-4 rounded-xl border border-border bg-secondary/60 p-4 text-sm text-muted-foreground">
-                We send UPI / bank details to your email and WhatsApp. Already paid? Send us the screenshot and we'll unlock the link.
-                <a href={whatsapp} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-foreground hover:bg-secondary">
-                  <MessageCircle className="h-3.5 w-3.5" /> WhatsApp about this order
-                </a>
+                This order isn't paid yet — files and links unlock the moment payment is confirmed.
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Link
+                    to="/orders/$reference"
+                    params={{ reference: order.reference }}
+                    search={{}}
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                  >
+                    <CreditCard className="h-3.5 w-3.5" /> Pay now
+                  </Link>
+                  <a href={whatsapp} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-foreground hover:bg-secondary">
+                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp about this order
+                  </a>
+                </div>
               </div>
             ) : null}
 
-            {order.status === "paid" ? (
-              <p className="mt-4 rounded-xl border border-border bg-secondary/60 p-4 text-sm text-muted-foreground">
-                Payment received — we're preparing your link. It usually appears within a few hours.
-              </p>
-            ) : null}
-
-            {order.status === "delivered" ? (
+            {order.status === "paid" || order.status === "delivered" ? (
               <div className="mt-4 rounded-xl border border-primary/30 bg-accent/40 p-4">
-                <p className="text-sm font-medium text-foreground">Your template is ready</p>
-                {order.deliverable?.duplicate_url ? (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <a
-                      href={order.deliverable.duplicate_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-                    >
-                      Duplicate in Notion <ExternalLink className="h-4 w-4" />
-                    </a>
-                    {order.deliverable.guide_url ? (
-                      <a
-                        href={order.deliverable.guide_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
-                      >
-                        <BookOpen className="h-4 w-4" /> Setup guide
-                      </a>
-                    ) : null}
-                  </div>
-                ) : (
+                <p className="text-sm font-medium text-foreground">
+                  {order.status === "delivered" ? "Your product is ready" : "Payment received"}
+                </p>
+                <div className="mt-3">
+                  <DeliveryPanel
+                    orderId={order.id}
+                    deliverable={order.deliverable}
+                    licenseKey={order.license_key}
+                    licenseMaxActivations={order.license_max_activations}
+                    deliveryType={order.delivery_type}
+                    status={order.status}
+                  />
+                </div>
+                {order.status === "delivered" && !order.deliverable ? (
                   <p className="mt-2 text-sm text-muted-foreground">
-                    The link was sent to your email. Can't find it? WhatsApp us with reference {order.reference}.
+                    The files were sent to your email. Can't find them? WhatsApp us with reference {order.reference}.
                   </p>
-                )}
-                {order.deliverable?.notes ? (
-                  <p className="mt-3 whitespace-pre-line text-xs text-muted-foreground">{order.deliverable.notes}</p>
                 ) : null}
               </div>
             ) : null}
 
+            {order.status === "refunded" ? (
+              <p className="mt-4 text-sm text-muted-foreground">Refunded{order.refunded_at ? ` on ${formatDate(order.refunded_at)}` : ""}. Any licence key from this order is inactive.</p>
+            ) : null}
             {order.status === "cancelled" && order.admin_note ? (
               <p className="mt-4 text-sm text-muted-foreground">Note: {order.admin_note}</p>
             ) : null}
+
+            <div className="mt-4">
+              <Link
+                to="/orders/$reference"
+                params={{ reference: order.reference }}
+                search={{}}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+              >
+                <Receipt className="h-3.5 w-3.5" /> Order page &amp; receipt
+              </Link>
+            </div>
           </PanelCard>
         );
       })}

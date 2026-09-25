@@ -30,7 +30,7 @@ export function Footer() {
 
           <div className="flex flex-col gap-2 text-sm">
             <p className="font-display text-xs font-semibold tracking-wider text-foreground uppercase">Store</p>
-            <Link to="/templates" className="text-muted-foreground hover:text-foreground">Notion templates</Link>
+            <Link to="/store" className="text-muted-foreground hover:text-foreground">Software store</Link>
             <Link to="/auth" className="text-muted-foreground hover:text-foreground">Sign in</Link>
             <Link to="/account" className="text-muted-foreground hover:text-foreground">My orders</Link>
             <Link to="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link>

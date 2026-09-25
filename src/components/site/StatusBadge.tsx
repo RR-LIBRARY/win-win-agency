@@ -10,6 +10,7 @@ const orderTone: Record<OrderStatus, string> = {
   paid: "bg-accent text-accent-foreground",
   delivered: "bg-chart-2/15 text-foreground",
   cancelled: "bg-muted text-muted-foreground",
+  refunded: "bg-destructive/10 text-destructive",
 };
 
 const bookingTone: Record<BookingStatus, string> = {

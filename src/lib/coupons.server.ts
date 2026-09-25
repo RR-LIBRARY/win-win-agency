@@ -15,8 +15,4 @@ export async function resolveCoupon(rawCode: string, price: number): Promise<Cou
   return { code, discount, label };
 }
 
-export async function markCouponUsed(code: string) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data } = await supabaseAdmin.from("coupons").select("id, used_count").eq("code", code).maybeSingle();
-  if (data) await supabaseAdmin.from("coupons").update({ used_count: data.used_count + 1 }).eq("id", data.id);
-}
+// Usage is counted once the order is actually paid — see payments/fulfillment.server.ts.

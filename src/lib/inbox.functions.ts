@@ -70,18 +70,26 @@ export const adminCounts = createServerFn({ method: "GET" })
 
 export const checkCoupon = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
-    z.object({ code: z.string().trim().min(1).max(40), templateSlug: z.string().min(1).max(120) }).parse(input),
+    z
+      .object({
+        code: z.string().trim().min(1).max(40),
+        templateSlug: z.string().min(1).max(120),
+        tierId: z.string().max(60).optional(),
+      })
+      .parse(input),
   )
   .handler(async ({ data }) => {
     const { supabase } = await createOptionalUserClient();
     const { data: template } = await supabase
       .from("templates")
-      .select("price")
+      .select("price, compare_at_price, tiers")
       .eq("slug", data.templateSlug)
       .eq("is_published", true)
       .maybeSingle();
-    if (!template) throw new Error("Template not found");
-    return resolveCoupon(data.code, template.price);
+    if (!template) throw new Error("Product not found");
+    const { resolvePrice } = await import("./payments/pricing");
+    const { price } = resolvePrice(template, data.tierId || null);
+    return resolveCoupon(data.code, price);
   });
 
 export const adminListCoupons = createServerFn({ method: "GET" })

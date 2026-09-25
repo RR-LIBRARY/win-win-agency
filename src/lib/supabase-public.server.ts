@@ -1,6 +1,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getRequest } from "@tanstack/react-start/server";
 import type { Database } from "@/integrations/supabase/types";
+import { resolveSupabasePublicEnv } from "@/integrations/supabase/public-config";
+
 
 function supabaseFetch(key: string): typeof fetch {
   return (input, init) => {
@@ -17,11 +19,11 @@ function supabaseFetch(key: string): typeof fetch {
 }
 
 function env() {
-  const url = process.env["SUPABASE_URL"];
-  const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
+  const { url, key } = resolveSupabasePublicEnv();
   if (!url || !key) throw new Error("Supabase server environment is not configured");
   return { url, key };
 }
+
 
 /** Anonymous client — only sees rows allowed by `TO anon` policies. */
 export function createPublicClient(): SupabaseClient<Database> {

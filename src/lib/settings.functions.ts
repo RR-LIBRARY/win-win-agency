@@ -12,6 +12,12 @@ export const SETTING_DEFAULTS = {
   contact_whatsapp: "910000000000",
   business_hours: "Mon–Sat, 10am–7pm IST",
   store_announcement: "",
+  business_legal_name: "Win Win Digital Agency",
+  business_address: "",
+  business_gstin: "",
+  payment_upi_id: "",
+  payment_bank_details: "",
+  refund_policy: "7-day refund if the product doesn't work as described. Licence keys are revoked on refund.",
 } as const;
 
 export type SettingKey = keyof typeof SETTING_DEFAULTS;
@@ -24,6 +30,12 @@ export const SETTING_LABELS: Record<SettingKey, string> = {
   contact_whatsapp: "WhatsApp number (country code + number, digits only)",
   business_hours: "Business hours",
   store_announcement: "Store announcement bar (leave empty to hide)",
+  business_legal_name: "Legal business name (printed on invoices)",
+  business_address: "Business address (printed on invoices)",
+  business_gstin: "Business GSTIN (leave empty if not registered)",
+  payment_upi_id: "UPI ID for bank-transfer orders (e.g. name@upi)",
+  payment_bank_details: "Bank account details for bank-transfer orders",
+  refund_policy: "Refund policy (shown at checkout and on receipts)",
 };
 
 const settingKeys = Object.keys(SETTING_DEFAULTS) as SettingKey[];

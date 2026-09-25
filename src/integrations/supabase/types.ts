@@ -158,64 +158,172 @@ export type Database = {
         }
         Relationships: []
       }
-      orders: {
+      license_keys: {
         Row: {
-          admin_note: string
-          amount: number
+          activations: number
           buyer_email: string
-          buyer_name: string
-          buyer_phone: string
-          coupon_code: string
           created_at: string
-          delivered_at: string | null
-          discount: number
           id: string
-          note: string
-          payment_reference: string
-          reference: string
+          key: string
+          last_activated_at: string | null
+          max_activations: number
+          order_id: string
           status: string
           template_id: string
-          template_title: string
           updated_at: string
           user_id: string | null
         }
         Insert: {
-          admin_note?: string
-          amount?: number
+          activations?: number
           buyer_email: string
-          buyer_name: string
-          buyer_phone?: string
-          coupon_code?: string
           created_at?: string
-          delivered_at?: string | null
-          discount?: number
           id?: string
-          note?: string
-          payment_reference?: string
-          reference: string
+          key: string
+          last_activated_at?: string | null
+          max_activations?: number
+          order_id: string
           status?: string
           template_id: string
-          template_title: string
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          activations?: number
+          buyer_email?: string
+          created_at?: string
+          id?: string
+          key?: string
+          last_activated_at?: string | null
+          max_activations?: number
+          order_id?: string
+          status?: string
+          template_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_keys_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "license_keys_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          access_token: string
+          admin_note: string
+          amount: number
+          amount_paid: number
+          buyer_company: string
+          buyer_email: string
+          buyer_gstin: string
+          buyer_name: string
+          buyer_phone: string
+          coupon_code: string
+          created_at: string
+          currency: string
+          delivered_at: string | null
+          discount: number
+          failure_reason: string
+          id: string
+          invoice_number: string | null
+          note: string
+          paid_at: string | null
+          payment_method: string
+          payment_provider: string
+          payment_reference: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          reference: string
+          refund_id: string | null
+          refunded_at: string | null
+          status: string
+          template_id: string
+          template_title: string
+          tier_id: string
+          tier_name: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          access_token?: string
           admin_note?: string
           amount?: number
+          amount_paid?: number
+          buyer_company?: string
+          buyer_email: string
+          buyer_gstin?: string
+          buyer_name: string
+          buyer_phone?: string
+          coupon_code?: string
+          created_at?: string
+          currency?: string
+          delivered_at?: string | null
+          discount?: number
+          failure_reason?: string
+          id?: string
+          invoice_number?: string | null
+          note?: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_provider?: string
+          payment_reference?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          reference: string
+          refund_id?: string | null
+          refunded_at?: string | null
+          status?: string
+          template_id: string
+          template_title: string
+          tier_id?: string
+          tier_name?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          access_token?: string
+          admin_note?: string
+          amount?: number
+          amount_paid?: number
+          buyer_company?: string
           buyer_email?: string
+          buyer_gstin?: string
           buyer_name?: string
           buyer_phone?: string
           coupon_code?: string
           created_at?: string
+          currency?: string
           delivered_at?: string | null
           discount?: number
+          failure_reason?: string
           id?: string
+          invoice_number?: string | null
           note?: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_provider?: string
           payment_reference?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
           reference?: string
+          refund_id?: string | null
+          refunded_at?: string | null
           status?: string
           template_id?: string
           template_title?: string
+          tier_id?: string
+          tier_name?: string
           updated_at?: string
           user_id?: string | null
         }
@@ -225,6 +333,59 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_events: {
+        Row: {
+          amount: number | null
+          created_at: string
+          error: string
+          event_id: string | null
+          event_type: string
+          id: string
+          order_id: string | null
+          payload: Json
+          provider: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          status: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          error?: string
+          event_id?: string | null
+          event_type: string
+          id?: string
+          order_id?: string | null
+          payload?: Json
+          provider?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          error?: string
+          event_id?: string | null
+          event_type?: string
+          id?: string
+          order_id?: string | null
+          payload?: Json
+          provider?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -279,22 +440,37 @@ export type Database = {
       }
       template_deliverables: {
         Row: {
+          access_url: string
+          download_path: string
+          download_url: string
           duplicate_url: string
           guide_url: string
+          issue_license: boolean
+          license_max_activations: number
           notes: string
           template_id: string
           updated_at: string
         }
         Insert: {
+          access_url?: string
+          download_path?: string
+          download_url?: string
           duplicate_url?: string
           guide_url?: string
+          issue_license?: boolean
+          license_max_activations?: number
           notes?: string
           template_id: string
           updated_at?: string
         }
         Update: {
+          access_url?: string
+          download_path?: string
+          download_url?: string
           duplicate_url?: string
           guide_url?: string
+          issue_license?: boolean
+          license_max_activations?: number
           notes?: string
           template_id?: string
           updated_at?: string
@@ -312,72 +488,117 @@ export type Database = {
       templates: {
         Row: {
           category: string
+          changelog: Json
           compare_at_price: number | null
           cover_image_url: string | null
           created_at: string
+          delivery_type: string
+          demo_url: string | null
           description: string
+          docs_url: string | null
+          external_platform: string
+          external_url: string | null
           faq: Json
+          file_size: string
           gallery_urls: string[]
           highlights: string[]
           id: string
           includes: string[]
           is_featured: boolean
           is_published: boolean
+          license_terms: string
+          platforms: string[]
           preview_url: string | null
           price: number
+          product_type: string
           rating: number
+          requirements: string[]
           sales_count: number
           slug: string
           sort_order: number
           tagline: string
+          tech_stack: string[]
+          tiers: Json
           title: string
           updated_at: string
+          version: string
+          video_url: string | null
         }
         Insert: {
           category?: string
+          changelog?: Json
           compare_at_price?: number | null
           cover_image_url?: string | null
           created_at?: string
+          delivery_type?: string
+          demo_url?: string | null
           description?: string
+          docs_url?: string | null
+          external_platform?: string
+          external_url?: string | null
           faq?: Json
+          file_size?: string
           gallery_urls?: string[]
           highlights?: string[]
           id?: string
           includes?: string[]
           is_featured?: boolean
           is_published?: boolean
+          license_terms?: string
+          platforms?: string[]
           preview_url?: string | null
           price?: number
+          product_type?: string
           rating?: number
+          requirements?: string[]
           sales_count?: number
           slug: string
           sort_order?: number
           tagline?: string
+          tech_stack?: string[]
+          tiers?: Json
           title: string
           updated_at?: string
+          version?: string
+          video_url?: string | null
         }
         Update: {
           category?: string
+          changelog?: Json
           compare_at_price?: number | null
           cover_image_url?: string | null
           created_at?: string
+          delivery_type?: string
+          demo_url?: string | null
           description?: string
+          docs_url?: string | null
+          external_platform?: string
+          external_url?: string | null
           faq?: Json
+          file_size?: string
           gallery_urls?: string[]
           highlights?: string[]
           id?: string
           includes?: string[]
           is_featured?: boolean
           is_published?: boolean
+          license_terms?: string
+          platforms?: string[]
           preview_url?: string | null
           price?: number
+          product_type?: string
           rating?: number
+          requirements?: string[]
           sales_count?: number
           slug?: string
           sort_order?: number
           tagline?: string
+          tech_stack?: string[]
+          tiers?: Json
           title?: string
           updated_at?: string
+          version?: string
+          video_url?: string | null
         }
         Relationships: []
       }
@@ -414,6 +635,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      next_invoice_number: { Args: never; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"

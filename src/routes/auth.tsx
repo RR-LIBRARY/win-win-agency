@@ -60,6 +60,38 @@ function AuthPage() {
     }
   }, [auth.loading, auth.user, mode, navigate, redirectTo]);
 
+  /** Turn raw auth-server messages into something a buyer can act on. */
+  function friendlyAuthError(message: string): { title: string; description: string; sticky: boolean } {
+    const m = message.toLowerCase();
+    if (m.includes("email logins are disabled") || m.includes("email signups are disabled") || m.includes("signups not allowed")) {
+      return {
+        title: "Email sign-in is switched off right now",
+        description:
+          "The account system has email login disabled, so no password can work yet. Site admin: enable the Email provider (Authentication → Sign In / Providers → Email) in the connected account project. Until then, use WhatsApp or the contact page — orders still work as guest checkout.",
+        sticky: true,
+      };
+    }
+    if (m.includes("invalid login credentials")) {
+      return { title: "Wrong email or password", description: "Check both and try again, or use “Forgot password?”.", sticky: false };
+    }
+    if (m.includes("email not confirmed")) {
+      return { title: "Confirm your email first", description: "Open the confirmation link we emailed you, then sign in.", sticky: true };
+    }
+    if (m.includes("rate limit") || m.includes("too many")) {
+      return { title: "Too many attempts", description: "Please wait a minute before trying again.", sticky: false };
+    }
+    if (m.includes("password should be") || m.includes("weak password")) {
+      return { title: "Choose a stronger password", description: message, sticky: false };
+    }
+    if (m.includes("already registered") || m.includes("already been registered")) {
+      return { title: "This email already has an account", description: "Sign in instead, or reset the password.", sticky: false };
+    }
+    if (m.includes("failed to fetch") || m.includes("network")) {
+      return { title: "No connection", description: "Check your internet (aeroplane mode off?) and try again.", sticky: false };
+    }
+    return { title: "That didn't work", description: message || "Please try again.", sticky: false };
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
@@ -99,9 +131,9 @@ function AuthPage() {
         await navigate({ to: "/account", replace: true });
       }
     } catch (error) {
-      toast.error("That didn't work", {
-        description: error instanceof Error ? error.message : "Please try again.",
-      });
+      const friendly = friendlyAuthError(error instanceof Error ? error.message : "");
+      toast.error(friendly.title, { description: friendly.description, duration: friendly.sticky ? 12000 : 5000 });
+      if (friendly.sticky) setNotice(friendly.description);
     } finally {
       setBusy(false);
     }

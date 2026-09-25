@@ -7,7 +7,7 @@ import { services, formatPrice } from "@/data/services";
 import { projects } from "@/data/projects";
 import { templatesQuery } from "@/lib/templates.functions";
 import { siteSettingsQuery } from "@/lib/settings.functions";
-import { TemplateCard } from "@/components/store/TemplateCard";
+import { ProductCard } from "@/components/store/ProductCard";
 
 export const Route = createFileRoute("/")({
   loader: async ({ context }) => {
@@ -61,7 +61,11 @@ function Home() {
   const { data: templates } = useSuspenseQuery(templatesQuery);
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
   const featuredTemplates = [...templates]
-    .sort((a, b) => Number(b.is_featured) - Number(a.is_featured))
+    .sort(
+      (a, b) =>
+        Number(b.is_featured) - Number(a.is_featured) ||
+        Number(b.product_type !== "notion_template") - Number(a.product_type !== "notion_template"),
+    )
     .slice(0, 3);
   const edtech = services.find((s) => s.slug === "educational-projects");
   const edtechFrom = edtech ? Math.min(...edtech.packages.map((p) => p.price)) : 0;
@@ -79,7 +83,7 @@ function Home() {
             </h1>
             <p className="mt-5 max-w-lg text-base text-muted-foreground md:text-lg">
               Websites, apps and coaching-centre software built to fixed packages — plus a store of
-              Notion templates you can buy and start using today.
+              ready-made software, source code and Notion systems you can buy and use today.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -89,10 +93,10 @@ function Home() {
                 Book your work <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/templates"
+                to="/store"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
               >
-                Shop Notion templates
+                Shop the software store
               </Link>
             </div>
             <dl className="mt-10 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-6">
@@ -218,22 +222,22 @@ function Home() {
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold tracking-[0.18em] text-primary uppercase">
-                  Template store
+                  Software store
                 </p>
                 <h2 className="mt-2 font-display text-2xl font-semibold text-foreground md:text-3xl">
-                  Notion systems you can start using tonight
+                  Ready-made software you can start using tonight
                 </h2>
               </div>
               <Link
-                to="/templates"
+                to="/store"
                 className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
               >
-                Browse all templates <ArrowUpRight className="h-4 w-4" />
+                Browse the store <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {featuredTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} />
+                <ProductCard key={template.id} product={template} />
               ))}
             </div>
           </div>

@@ -46,7 +46,7 @@ function AccountOverview() {
         {orderList.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No template orders yet.{" "}
-            <Link to="/templates" className="text-primary hover:underline">
+            <Link to="/store" className="text-primary hover:underline">
               Browse the store
             </Link>
             .

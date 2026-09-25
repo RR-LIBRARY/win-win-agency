@@ -20,10 +20,10 @@ function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatTile label="Template revenue" value={formatPrice(data.orders.revenue)} hint={`${data.orders.delivered} delivered · ${data.orders.paid} paid`} />
+        <StatTile label="Store revenue" value={formatPrice(data.orders.revenue)} hint={`${data.orders.delivered} delivered · ${data.orders.paid} paid`} />
         <StatTile label="Orders awaiting payment" value={String(data.orders.pending)} hint={`${data.orders.total} orders total`} />
         <StatTile label="Open bookings" value={String(data.bookings.open)} hint={`Pipeline ${formatPrice(data.bookings.pipeline)}`} />
-        <StatTile label="Customers" value={String(data.customers)} hint={`${data.templates.published}/${data.templates.total} templates live`} />
+        <StatTile label="Customers" value={String(data.customers)} hint={`${data.templates.published}/${data.templates.total} products live`} />
       </div>
 
       <div className="flex flex-wrap gap-2">

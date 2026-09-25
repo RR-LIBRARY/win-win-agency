@@ -19,11 +19,15 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as StoreRouteImport } from './routes/store'
 import { Route as TemplatesRouteImport } from './routes/templates'
 import { Route as AuthenticatedAccountRouteRouteImport } from './routes/_authenticated/account/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as OrdersReferenceRouteImport } from './routes/orders.$reference'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as PortfolioSlugRouteImport } from './routes/portfolio.$slug'
+import { Route as StoreIndexRouteImport } from './routes/store.index'
+import { Route as StoreSlugRouteImport } from './routes/store.$slug'
 import { Route as TemplatesIndexRouteImport } from './routes/templates.index'
 import { Route as TemplatesSlugRouteImport } from './routes/templates.$slug'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
@@ -35,10 +39,13 @@ import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated/admin/coupons'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin/orders'
+import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin/team'
 import { Route as AuthenticatedAdminTemplatesIndexRouteImport } from './routes/_authenticated/admin/templates/index'
 import { Route as AuthenticatedAdminTemplatesIdRouteImport } from './routes/_authenticated/admin/templates/$id'
+import { Route as ApiPublicLicenseVerifyRouteImport } from './routes/api/public/license/verify'
+import { Route as ApiPublicWebhooksRazorpayRouteImport } from './routes/api/public/webhooks/razorpay'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -89,6 +96,11 @@ const ServicesRoute = ServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoreRoute = StoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TemplatesRoute = TemplatesRouteImport.update({
   id: '/templates',
   path: '/templates',
@@ -105,6 +117,11 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const OrdersReferenceRoute = OrdersReferenceRouteImport.update({
+  id: '/orders/$reference',
+  path: '/orders/$reference',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -114,6 +131,16 @@ const PortfolioSlugRoute = PortfolioSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => PortfolioRoute,
+} as any)
+const StoreIndexRoute = StoreIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreSlugRoute = StoreSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => StoreRoute,
 } as any)
 const TemplatesIndexRoute = TemplatesIndexRouteImport.update({
   id: '/',
@@ -178,6 +205,12 @@ const AuthenticatedAdminOrdersRoute =
     path: '/orders',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPaymentsRoute =
+  AuthenticatedAdminPaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -201,6 +234,17 @@ const AuthenticatedAdminTemplatesIdRoute =
     path: '/templates/$id',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const ApiPublicLicenseVerifyRoute = ApiPublicLicenseVerifyRouteImport.update({
+  id: '/api/public/license/verify',
+  path: '/api/public/license/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWebhooksRazorpayRoute =
+  ApiPublicWebhooksRazorpayRouteImport.update({
+    id: '/api/public/webhooks/razorpay',
+    path: '/api/public/webhooks/razorpay',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -212,12 +256,16 @@ export interface FileRoutesByFullPath {
   '/portfolio': typeof PortfolioRouteWithChildren
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRoute
+  '/store': typeof StoreRouteWithChildren
   '/templates': typeof TemplatesRouteWithChildren
   '/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/orders/$reference': typeof OrdersReferenceRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/store/$slug': typeof StoreSlugRoute
   '/templates/$slug': typeof TemplatesSlugRoute
   '/portfolio/': typeof PortfolioIndexRoute
+  '/store/': typeof StoreIndexRoute
   '/templates/': typeof TemplatesIndexRoute
   '/account/bookings': typeof AuthenticatedAccountBookingsRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
@@ -226,11 +274,14 @@ export interface FileRoutesByFullPath {
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/templates/$id': typeof AuthenticatedAdminTemplatesIdRoute
+  '/api/public/license/verify': typeof ApiPublicLicenseVerifyRoute
+  '/api/public/webhooks/razorpay': typeof ApiPublicWebhooksRazorpayRoute
   '/admin/templates/': typeof AuthenticatedAdminTemplatesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -242,9 +293,12 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRoute
+  '/orders/$reference': typeof OrdersReferenceRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/store/$slug': typeof StoreSlugRoute
   '/templates/$slug': typeof TemplatesSlugRoute
   '/portfolio': typeof PortfolioIndexRoute
+  '/store': typeof StoreIndexRoute
   '/templates': typeof TemplatesIndexRoute
   '/account/bookings': typeof AuthenticatedAccountBookingsRoute
   '/account/orders': typeof AuthenticatedAccountOrdersRoute
@@ -253,11 +307,14 @@ export interface FileRoutesByTo {
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/templates/$id': typeof AuthenticatedAdminTemplatesIdRoute
+  '/api/public/license/verify': typeof ApiPublicLicenseVerifyRoute
+  '/api/public/webhooks/razorpay': typeof ApiPublicWebhooksRazorpayRoute
   '/admin/templates': typeof AuthenticatedAdminTemplatesIndexRoute
 }
 export interface FileRoutesById {
@@ -272,12 +329,16 @@ export interface FileRoutesById {
   '/portfolio': typeof PortfolioRouteWithChildren
   '/pricing': typeof PricingRoute
   '/services': typeof ServicesRoute
+  '/store': typeof StoreRouteWithChildren
   '/templates': typeof TemplatesRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/orders/$reference': typeof OrdersReferenceRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
+  '/store/$slug': typeof StoreSlugRoute
   '/templates/$slug': typeof TemplatesSlugRoute
   '/portfolio/': typeof PortfolioIndexRoute
+  '/store/': typeof StoreIndexRoute
   '/templates/': typeof TemplatesIndexRoute
   '/_authenticated/account/bookings': typeof AuthenticatedAccountBookingsRoute
   '/_authenticated/account/orders': typeof AuthenticatedAccountOrdersRoute
@@ -286,11 +347,14 @@ export interface FileRoutesById {
   '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/templates/$id': typeof AuthenticatedAdminTemplatesIdRoute
+  '/api/public/license/verify': typeof ApiPublicLicenseVerifyRoute
+  '/api/public/webhooks/razorpay': typeof ApiPublicWebhooksRazorpayRoute
   '/_authenticated/admin/templates/': typeof AuthenticatedAdminTemplatesIndexRoute
 }
 export interface FileRouteTypes {
@@ -305,12 +369,16 @@ export interface FileRouteTypes {
     | '/portfolio'
     | '/pricing'
     | '/services'
+    | '/store'
     | '/templates'
     | '/account'
     | '/admin'
+    | '/orders/$reference'
     | '/portfolio/$slug'
+    | '/store/$slug'
     | '/templates/$slug'
     | '/portfolio/'
+    | '/store/'
     | '/templates/'
     | '/account/bookings'
     | '/account/orders'
@@ -319,11 +387,14 @@ export interface FileRouteTypes {
     | '/admin/coupons'
     | '/admin/messages'
     | '/admin/orders'
+    | '/admin/payments'
     | '/admin/settings'
     | '/admin/team'
     | '/account/'
     | '/admin/'
     | '/admin/templates/$id'
+    | '/api/public/license/verify'
+    | '/api/public/webhooks/razorpay'
     | '/admin/templates/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -335,9 +406,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/pricing'
     | '/services'
+    | '/orders/$reference'
     | '/portfolio/$slug'
+    | '/store/$slug'
     | '/templates/$slug'
     | '/portfolio'
+    | '/store'
     | '/templates'
     | '/account/bookings'
     | '/account/orders'
@@ -346,11 +420,14 @@ export interface FileRouteTypes {
     | '/admin/coupons'
     | '/admin/messages'
     | '/admin/orders'
+    | '/admin/payments'
     | '/admin/settings'
     | '/admin/team'
     | '/account'
     | '/admin'
     | '/admin/templates/$id'
+    | '/api/public/license/verify'
+    | '/api/public/webhooks/razorpay'
     | '/admin/templates'
   id:
     | '__root__'
@@ -364,12 +441,16 @@ export interface FileRouteTypes {
     | '/portfolio'
     | '/pricing'
     | '/services'
+    | '/store'
     | '/templates'
     | '/_authenticated/account'
     | '/_authenticated/admin'
+    | '/orders/$reference'
     | '/portfolio/$slug'
+    | '/store/$slug'
     | '/templates/$slug'
     | '/portfolio/'
+    | '/store/'
     | '/templates/'
     | '/_authenticated/account/bookings'
     | '/_authenticated/account/orders'
@@ -378,11 +459,14 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/coupons'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/orders'
+    | '/_authenticated/admin/payments'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/templates/$id'
+    | '/api/public/license/verify'
+    | '/api/public/webhooks/razorpay'
     | '/_authenticated/admin/templates/'
   fileRoutesById: FileRoutesById
 }
@@ -397,7 +481,11 @@ export interface RootRouteChildren {
   PortfolioRoute: typeof PortfolioRouteWithChildren
   PricingRoute: typeof PricingRoute
   ServicesRoute: typeof ServicesRoute
+  StoreRoute: typeof StoreRouteWithChildren
   TemplatesRoute: typeof TemplatesRouteWithChildren
+  OrdersReferenceRoute: typeof OrdersReferenceRoute
+  ApiPublicLicenseVerifyRoute: typeof ApiPublicLicenseVerifyRoute
+  ApiPublicWebhooksRazorpayRoute: typeof ApiPublicWebhooksRazorpayRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -472,6 +560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/templates': {
       id: '/templates'
       path: '/templates'
@@ -493,6 +588,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/orders/$reference': {
+      id: '/orders/$reference'
+      path: '/orders/$reference'
+      fullPath: '/orders/$reference'
+      preLoaderRoute: typeof OrdersReferenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portfolio/': {
       id: '/portfolio/'
       path: '/'
@@ -506,6 +608,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/portfolio/$slug'
       preLoaderRoute: typeof PortfolioSlugRouteImport
       parentRoute: typeof PortfolioRoute
+    }
+    '/store/': {
+      id: '/store/'
+      path: '/'
+      fullPath: '/store/'
+      preLoaderRoute: typeof StoreIndexRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/store/$slug': {
+      id: '/store/$slug'
+      path: '/$slug'
+      fullPath: '/store/$slug'
+      preLoaderRoute: typeof StoreSlugRouteImport
+      parentRoute: typeof StoreRoute
     }
     '/templates/': {
       id: '/templates/'
@@ -584,6 +700,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/payments': {
+      id: '/_authenticated/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -611,6 +734,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/templates/$id'
       preLoaderRoute: typeof AuthenticatedAdminTemplatesIdRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/api/public/license/verify': {
+      id: '/api/public/license/verify'
+      path: '/api/public/license/verify'
+      fullPath: '/api/public/license/verify'
+      preLoaderRoute: typeof ApiPublicLicenseVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/webhooks/razorpay': {
+      id: '/api/public/webhooks/razorpay'
+      path: '/api/public/webhooks/razorpay'
+      fullPath: '/api/public/webhooks/razorpay'
+      preLoaderRoute: typeof ApiPublicWebhooksRazorpayRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -640,6 +777,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
+  AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -653,6 +791,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
     AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
     AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
+    AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -693,6 +832,18 @@ const PortfolioRouteWithChildren = PortfolioRoute._addFileChildren(
   PortfolioRouteChildren,
 )
 
+interface StoreRouteChildren {
+  StoreSlugRoute: typeof StoreSlugRoute
+  StoreIndexRoute: typeof StoreIndexRoute
+}
+
+const StoreRouteChildren: StoreRouteChildren = {
+  StoreSlugRoute: StoreSlugRoute,
+  StoreIndexRoute: StoreIndexRoute,
+}
+
+const StoreRouteWithChildren = StoreRoute._addFileChildren(StoreRouteChildren)
+
 interface TemplatesRouteChildren {
   TemplatesSlugRoute: typeof TemplatesSlugRoute
   TemplatesIndexRoute: typeof TemplatesIndexRoute
@@ -718,7 +869,11 @@ const rootRouteChildren: RootRouteChildren = {
   PortfolioRoute: PortfolioRouteWithChildren,
   PricingRoute: PricingRoute,
   ServicesRoute: ServicesRoute,
+  StoreRoute: StoreRouteWithChildren,
   TemplatesRoute: TemplatesRouteWithChildren,
+  OrdersReferenceRoute: OrdersReferenceRoute,
+  ApiPublicLicenseVerifyRoute: ApiPublicLicenseVerifyRoute,
+  ApiPublicWebhooksRazorpayRoute: ApiPublicWebhooksRazorpayRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

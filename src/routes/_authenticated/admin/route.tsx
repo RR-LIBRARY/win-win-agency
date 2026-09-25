@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Inbox, TicketPercent, CalendarCheck, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, Users } from "lucide-react";
+import { Inbox, TicketPercent, CalendarCheck, CreditCard, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, Users } from "lucide-react";
 import { PanelError, PanelLoading, PanelShell, type PanelNavItem } from "@/components/panel/PanelShell";
 import { getMyAccess } from "@/lib/admin.functions";
 import { adminCounts } from "@/lib/inbox.functions";
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
       { title: "Admin — Win Win Digital Agency" },
-      { name: "description", content: "Manage templates, orders, bookings and site settings." },
+      { name: "description", content: "Manage products, orders, payments, bookings and site settings." },
       { property: "og:title", content: "Admin — Win Win Digital Agency" },
       { property: "og:description", content: "Agency control panel." },
     ],
@@ -19,8 +19,9 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const baseNav: PanelNavItem[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/admin/templates", label: "Templates", icon: NotebookPen },
+  { to: "/admin/templates", label: "Products", icon: NotebookPen },
   { to: "/admin/orders", label: "Orders", icon: Package },
+  { to: "/admin/payments", label: "Payments & licences", icon: CreditCard },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
   { to: "/admin/messages", label: "Messages", icon: Inbox },
   { to: "/admin/coupons", label: "Coupons", icon: TicketPercent },
@@ -54,7 +55,7 @@ function AdminLayout() {
       nav={nav}
       actions={
         <>
-          <Link to="/templates" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary">
+          <Link to="/store" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary">
             <ExternalLink className="h-4 w-4" /> View store
           </Link>
           <Link to="/account" className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary">

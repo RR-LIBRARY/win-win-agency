@@ -59,7 +59,7 @@ export function PanelShell({
   );
 }
 
-export function PanelCard({ title, description, children, actions }: { title?: string; description?: string; children: ReactNode; actions?: ReactNode }) {
+export function PanelCard({ title, description, children, actions }: { title?: string | undefined; description?: string | undefined; children: ReactNode; actions?: ReactNode }) {
   return (
     <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
       {title || actions ? (
