@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { siteSettingsQuery } from "@/lib/settings.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { sendContactMessage } from "@/lib/inbox.functions";
 
 export const Route = createFileRoute("/contact")({
   loader: ({ context }) => context.queryClient.ensureQueryData(siteSettingsQuery),
@@ -31,6 +33,8 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const send = useServerFn(sendContactMessage);
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
 
   return (
@@ -62,30 +66,47 @@ function ContactPage() {
           ) : (
             <form
               className="space-y-5"
-              onSubmit={(event) => {
+              onSubmit={async (event) => {
                 event.preventDefault();
-                setSent(true);
-                toast.success("Message sent", { description: "We reply within one working day." });
+                const form = new FormData(event.currentTarget);
+                setBusy(true);
+                try {
+                  await send({
+                    data: {
+                      name: String(form.get("name") ?? ""),
+                      email: String(form.get("email") ?? ""),
+                      phone: String(form.get("phone") ?? ""),
+                      message: String(form.get("message") ?? ""),
+                    },
+                  });
+                  setSent(true);
+                  toast.success("Message sent", { description: "We reply within one working day." });
+                } catch (error) {
+                  toast.error("Could not send", { description: error instanceof Error ? error.message : "Please try again." });
+                } finally {
+                  setBusy(false);
+                }
               }}
             >
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="c-name">Your name</Label>
-                  <Input id="c-name" required placeholder="Full name" />
+                  <Input id="c-name" name="name" required placeholder="Full name" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="c-email">Email</Label>
-                  <Input id="c-email" type="email" required placeholder="you@example.com" />
+                  <Input id="c-email" name="email" type="email" required placeholder="you@example.com" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="c-phone">Phone or WhatsApp</Label>
-                <Input id="c-phone" required placeholder="+91" />
+                <Input id="c-phone" name="phone" required placeholder="+91" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="c-message">What do you need?</Label>
                 <Textarea
                   id="c-message"
+                  name="message"
                   required
                   rows={6}
                   placeholder="Tell us about your business and what you want built."
@@ -93,9 +114,10 @@ function ContactPage() {
               </div>
               <button
                 type="submit"
-                className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                disabled={busy}
+                className="inline-flex rounded-full disabled:opacity-60 bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Send message
+                {busy ? "Sending" : "Send message"}
               </button>
               <p className="text-xs text-muted-foreground">
                 Ready to start instead?{" "}

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createOptionalUserClient, makeReference } from "./supabase-public.server";
 import { assertAdmin } from "./admin-guard.server";
+import { markCouponUsed, resolveCoupon } from "./coupons.server";
 import { ORDER_STATUSES, type DeliverableRow, type OrderRow } from "./db-types";
 
 const placeOrderSchema = z.object({
@@ -11,6 +12,7 @@ const placeOrderSchema = z.object({
   email: z.string().trim().email().max(200),
   phone: z.string().trim().max(30),
   note: z.string().trim().max(2000),
+  couponCode: z.string().trim().max(40).optional(),
 });
 
 export type PlaceOrderInput = z.infer<typeof placeOrderSchema>;
@@ -29,6 +31,9 @@ export const placeOrder = createServerFn({ method: "POST" })
     if (templateError) throw new Error(templateError.message);
     if (!template) throw new Error("This template is no longer available");
 
+    const coupon = data.couponCode ? await resolveCoupon(data.couponCode, template.price) : null;
+    const amount = template.price - (coupon?.discount ?? 0);
+
     // Guests have insert-only access (no read policy), so RETURNING would be
     // rejected by RLS. Generate the identifiers here and insert without a select.
     const id = crypto.randomUUID();
@@ -40,7 +45,9 @@ export const placeOrder = createServerFn({ method: "POST" })
       user_id: userId,
       template_id: template.id,
       template_title: template.title,
-      amount: template.price,
+      amount,
+      coupon_code: coupon?.code ?? "",
+      discount: coupon?.discount ?? 0,
       buyer_name: data.name,
       buyer_email: data.email.toLowerCase(),
       buyer_phone: data.phone,
@@ -49,11 +56,12 @@ export const placeOrder = createServerFn({ method: "POST" })
       created_at: createdAt,
     });
     if (error) throw new Error(error.message);
+    if (coupon) await markCouponUsed(coupon.code);
 
     return {
       id,
       reference,
-      amount: template.price,
+      amount,
       title: template.title,
       createdAt,
       linkedToAccount: Boolean(userId),

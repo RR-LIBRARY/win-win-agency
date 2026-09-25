@@ -7,6 +7,7 @@ export type PanelNavItem = {
   label: string;
   icon: LucideIcon;
   exact?: boolean;
+  badge?: number;
 };
 
 export function PanelShell({
@@ -45,6 +46,9 @@ export function PanelShell({
                 activeProps={{ className: "bg-secondary text-foreground font-medium" }}
               >
                 <Icon className="h-4 w-4" /> {item.label}
+                {item.badge ? (
+                  <span className="ml-auto rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">{item.badge}</span>
+                ) : null}
               </Link>
             );
           })}
