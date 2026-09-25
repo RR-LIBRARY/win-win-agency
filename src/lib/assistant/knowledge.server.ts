@@ -13,11 +13,11 @@ import { createPublicClient } from "@/lib/supabase-public.server";
 type Client = SupabaseClient<Database>;
 
 const PRODUCT_COLUMNS =
-  "id, slug, title, tagline, description, category, product_type, delivery_type, price, compare_at_price, tiers, includes, highlights, requirements, platforms, tech_stack, version, faq, license_terms, demo_url, docs_url, external_url, external_platform, is_featured, sales_count, rating";
+  "id, slug, title, tagline, description, category, product_type, delivery_type, price, compare_at_price, tiers, includes, highlights, requirements, platforms, tech_stack, version, faq, license_terms, demo_url, docs_url, external_url, external_platform, is_featured, sales_count, rating, review_avg, review_count";
 
 type ProductRow = Pick<
   Database["public"]["Tables"]["templates"]["Row"],
-  | "id" | "slug" | "title" | "tagline" | "description" | "category" | "product_type" | "delivery_type" | "price" | "compare_at_price" | "tiers" | "includes" | "highlights" | "requirements" | "platforms" | "tech_stack" | "version" | "faq" | "license_terms" | "demo_url" | "docs_url" | "external_url" | "external_platform" | "is_featured" | "sales_count" | "rating"
+  | "id" | "slug" | "title" | "tagline" | "description" | "category" | "product_type" | "delivery_type" | "price" | "compare_at_price" | "tiers" | "includes" | "highlights" | "requirements" | "platforms" | "tech_stack" | "version" | "faq" | "license_terms" | "demo_url" | "docs_url" | "external_url" | "external_platform" | "is_featured" | "sales_count" | "rating" | "review_avg" | "review_count"
 >;
 
 export type AssistantContext = {
@@ -55,6 +55,27 @@ async function loadProducts(): Promise<ProductRow[]> {
     console.error("[assistant] products read failed", err instanceof Error ? err.message : err);
     return [];
   }
+}
+
+async function loadPublicDocTitles(): Promise<Map<string, string[]>> {
+  const map = new Map<string, string[]>();
+  try {
+    const { data, error } = await createPublicClient()
+      .from("product_docs")
+      .select("template_id, title")
+      .eq("visibility", "public")
+      .order("sort_order", { ascending: true })
+      .limit(200);
+    if (error) throw error;
+    for (const d of data ?? []) {
+      const list = map.get(d.template_id) ?? [];
+      if (list.length < 5) list.push(String(d.title).slice(0, 80));
+      map.set(d.template_id, list);
+    }
+  } catch (err) {
+    console.error("[assistant] docs read failed", err instanceof Error ? err.message : err);
+  }
+  return map;
 }
 
 function productUrl(origin: string, slug: string) {
@@ -109,11 +130,11 @@ function deliveryLabel(type: string) {
 // ---------- knowledge pack (goes in the system prompt) ----------
 
 export async function buildKnowledgePack(ctx: AssistantContext) {
-  const [settings, products] = await Promise.all([loadSettings(), loadProducts()]);
+  const [settings, products, docTitles] = await Promise.all([loadSettings(), loadProducts(), loadPublicDocTitles()]);
 
   const productLines = products.map((p) => {
     const s = summarizeProduct(p, ctx.origin);
-    return `- ${s.title} [${s.type}] — ${s.price}${s.compare_at ? ` (was ${s.compare_at})` : ""} — ${s.delivery} — ${s.url}`;
+    return `- ${s.title} [${s.type}] — ${s.price}${s.compare_at ? ` (was ${s.compare_at})` : ""} — ${s.delivery} — ${s.url}${p.review_count > 0 ? ` — rated ${p.review_avg}/5 from ${p.review_count} verified review${p.review_count === 1 ? "" : "s"}` : ""}${docTitles.get(p.id)?.length ? ` — guides: ${docTitles.get(p.id)!.join("; ")}` : ""}`;
   });
 
   const serviceLines = services.map((svc) => {

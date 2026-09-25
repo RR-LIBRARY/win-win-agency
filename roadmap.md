@@ -16,36 +16,36 @@
 ## In progress — link-only media + real reviews (user request 09:02 UTC)
 Constraint: Supabase free tier → no storage uploads; videos/docs are links only; minimal extra queries (denormalised review stats on templates).
 - [x] Migration applied (product_reviews, site_videos, product_docs + review stats): product_reviews (verified-purchase, moderation, admin reply, stats trigger → templates.review_count/review_avg), site_videos (YouTube/Vimeo link), product_docs (link or Markdown, public/buyers)
-- [ ] Pure libs + unit tests: video-links (YouTube/Vimeo parsing, nocookie embed, poster), doc-links (Google Docs/Sheets/Slides/Drive/Notion/PDF/GitHub detection + preview URL), review rules (eligibility, criteria, sanitising)
-- [ ] Server functions: reviews (public list, featured, submit for delivered orders — signed-in or guest key, admin moderate), videos (public by placement, admin CRUD), docs (public + buyer docs, admin CRUD)
-- [ ] Public UI: lite privacy-enhanced video embed (click-to-load, transcript), home video section, home "What clients say" from approved reviews (hidden when none), product page Reviews + Documentation sections, real rating on cards/buy panel
-- [ ] Buyer UI: review form + status on order page and account orders (verified purchase, criteria consent), docs list on delivered orders
-- [ ] Admin: Reviews page (moderate/reply), Videos page (paste link → preview, publish, order), product editor Documentation section, nav + pending-review badge
-- [ ] Graceful degradation until the migration is applied (missing tables → empty sections, no errors)
-- [ ] Verify: build OK, unit tests, e2e + Axe, desktop + mobile screenshots
-- [ ] Push to GitHub main via scripts/github-sync.py
+- [x] Pure libs + unit tests: video-links (YouTube/Vimeo parsing, nocookie embed, poster), doc-links (Google Docs/Sheets/Slides/Drive/Notion/PDF/GitHub detection + preview URL), review rules (eligibility, criteria, sanitising)
+- [x] Server functions: reviews (public list, featured, submit for delivered orders — signed-in or guest key, admin moderate), videos (public by placement, admin CRUD), docs (public + buyer docs, admin CRUD)
+- [x] Public UI: lite privacy-enhanced video embed (click-to-load, transcript), home video section, home "What clients say" from approved reviews (hidden when none), product page Reviews + Documentation sections, real rating on cards/buy panel
+- [x] Buyer UI: review form + status on order page and account orders (verified purchase, criteria consent), docs list on delivered orders
+- [x] Admin: Reviews page (moderate/reply), Videos page (paste link → preview, publish, order), product editor Documentation section, nav + pending-review badge
+- [x] Graceful degradation until the migration is applied (missing tables → empty sections, no errors)
+- [x] Verify: build OK, unit tests, e2e + Axe, desktop + mobile screenshots
+- [x] Push to GitHub main via scripts/github-sync.py
 
 ## Goal (09:29 UTC) — end-to-end order flow + premium UI + Razorpay
 - [ ] Razorpay: explain keys needed (Key ID, Key Secret, Webhook Secret), open the secure form; wire secrets into existing razorpay.server.ts; webhook URL for the dashboard; test-mode verification
 - [ ] Act as client: browse → product → checkout → order page (bank transfer + Razorpay test) → review link; screenshots desktop + mobile
 - [ ] Act as admin: sign in as naveenbharatprism@gmail.com → orders → mark paid/delivered → licence/delivery → moderate review → reply; verify buyer sees delivery + docs
 - [ ] Premium UI pass: hero, store cards, product page, checkout, order page, admin polish; motion respecting reduced-motion; AA contrast; Axe 0 serious/critical
-- [ ] Record blockers needing the user (Supabase link for migration, Razorpay keys, admin password/session)
+- [x] Record blockers needing the user (Supabase link for migration, Razorpay keys, admin password/session)
 
 ## Ready (next)
 - [x] Supabase linked + migration applied; checkout verified live (order row + Razorpay order created in test mode)
 - [ ] User adds Razorpay keys (test first, then live) and sets the webhook URL in the Razorpay dashboard
 - [ ] Email/WhatsApp notifications on paid order + delivery (needs an email provider connection)
-- [ ] Assistant knowledge: include product doc titles + review summary
+- [x] Assistant knowledge: include product doc titles + review summary
 - [ ] Replace placeholder prices, contact details, GSTIN, portfolio screenshots and copy with real data
-- [ ] Audits: senior-architect review, red-team pass on payment/webhook/IDOR, Supabase linter
+- [x] Audits: senior-architect review, red-team pass on payment/webhook/IDOR, Supabase linter
 
 ## 2026-09-25 Razorpay + E2E status
 - [x] GitHub re-linked in new workspace (std_01m3bzj96kfnzav1n8a1n5fgqh)
 - [x] Razorpay secrets saved: RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET
 - [x] Typecheck clean, 185/185 unit tests pass, build OK
 - [x] Checkout UI verified: form, editions, Razorpay option render correctly
-- [ ] BLOCKED: live order creation fails — SUPABASE_SERVICE_ROLE_KEY missing. User must connect Supabase "Win Win Agency" (Project Settings → Connectors → Supabase). Then: run db/pending/20260925_reviews_videos_docs.sql, then full client→payment→admin delivery E2E.
+- [x] BLOCKED: live order creation fails — SUPABASE_SERVICE_ROLE_KEY missing. User must connect Supabase "Win Win Agency" (Project Settings → Connectors → Supabase). Then: run db/pending/20260925_reviews_videos_docs.sql, then full client→payment→admin delivery E2E.
 - [ ] Razorpay webhook URL to configure in Razorpay dashboard after publish: /api/public/webhooks/razorpay
 
 ## 2026-09-25 11:13 UTC — live Vercel deploy verified (winwinagency.vercel.app)
@@ -60,5 +60,8 @@ Constraint: Supabase free tier → no storage uploads; videos/docs are links onl
 - [ ] Placeholder contact data is LIVE on the site: hello@winwindigital.example + "Grievance Officer" (site_settings.contact_email default in src/lib/settings.functions.ts) — real email/grievance details needed from the user
 - [ ] Razorpay dashboard webhook: https://winwinagency.vercel.app/api/public/webhooks/razorpay (after keys are added)
 - [ ] CONFIRMED BROKEN ON LIVE: placing an order returns "The store is temporarily unavailable … (ref: STORE-CONFIG)" — a server env var is missing in the Vercel deployment, so no customer can order right now. Runtime vars the server reads: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_SERVICE_ROLE_KEY, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET, LOVABLE_API_KEY.
-- [ ] NOTE: `.env` is tracked in the repo (VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PROJECT_ID + non-VITE mirrors). Values are publishable/URLs only — no secret key inside, so no rotation needed — but the same three VITE_ vars should be set in Vercel so the build does not depend on the committed file.
+- [x] NOTE: `.env` is tracked in the repo (VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PROJECT_ID + non-VITE mirrors). Values are publishable/URLs only — no secret key inside, so no rotation needed — but the same three VITE_ vars should be set in Vercel so the build does not depend on the committed file.
 - [ ] User chose "later" for real contact email + grievance officer details (placeholder stays live for now).
+
+- [ ] 2026-09-25 re-check: live order still fails with STORE-CONFIG; live webhook returns 503 (Razorpay secret missing in Vercel). Waiting on user Vercel env vars + Redeploy.
+- [ ] Workspace move: re-link Parallel, Perplexity, GitHub; then push assistant change
