@@ -21,6 +21,9 @@ export const SETTING_DEFAULTS = {
   payment_upi_id: "",
   payment_bank_details: "",
   refund_policy: "7-day refund if the product doesn't work as described. Licence keys are revoked on refund.",
+  grievance_officer_name: "",
+  grievance_officer_email: "",
+  grievance_officer_phone: "",
   assistant_extra_knowledge: "",
 } as const;
 
@@ -42,12 +45,23 @@ export const SETTING_LABELS: Record<SettingKey, string> = {
   business_gstin: "Business GSTIN (leave empty if not registered)",
   payment_upi_id: "UPI ID for bank-transfer orders (e.g. name@upi)",
   payment_bank_details: "Bank account details for bank-transfer orders",
-  refund_policy: "Refund policy (shown at checkout and on receipts)",
+  refund_policy: "Refund policy summary (shown at checkout and on receipts)",
+  grievance_officer_name: "Grievance officer — name (required by the Consumer Protection E-Commerce Rules)",
+  grievance_officer_email: "Grievance officer — email",
+  grievance_officer_phone: "Grievance officer — phone",
   assistant_extra_knowledge: "Extra facts for the AI assistant (fees, batch timings, FAQs — one per line)",
 };
 
 /** Setting keys whose values must be https links when filled. */
 export const URL_SETTING_KEYS: SettingKey[] = ["edutech_demo_url", "business_map_url", "business_map_embed_url"];
+
+/** Resolved contact points for the legal pages: grievance officer falls back to the main contact. */
+export function grievanceContact(settings: SiteSettings) {
+  const email = settings.grievance_officer_email.trim() || settings.contact_email;
+  const phone = settings.grievance_officer_phone.trim();
+  const name = settings.grievance_officer_name.trim() || "Grievance Officer";
+  return { name, email, phone };
+}
 
 const settingKeys = Object.keys(SETTING_DEFAULTS) as SettingKey[];
 

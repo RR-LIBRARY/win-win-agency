@@ -205,12 +205,12 @@ function ProductDetailPage() {
                 {specs.map((s) => {
                   const Icon = s.icon;
                   return (
-                    <div key={s.label} className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      <div className="min-w-0">
-                        <dt className="text-xs text-muted-foreground">{s.label}</dt>
-                        <dd className="text-sm font-medium text-foreground">{s.value}</dd>
-                      </div>
+                    <div key={s.label} className="min-w-0 rounded-xl border border-border bg-card p-4">
+                      <dt className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Icon className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                        {s.label}
+                      </dt>
+                      <dd className="mt-1 pl-6 text-sm font-medium text-foreground">{s.value}</dd>
                     </div>
                   );
                 })}

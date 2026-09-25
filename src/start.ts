@@ -2,6 +2,7 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "./lib/auth-attacher";
+import { customerSafeErrors } from "./lib/customer-safe-middleware";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -27,5 +28,7 @@ const csrfMiddleware = createCsrfMiddleware({
 
 export const startInstance = createStart(() => ({
   requestMiddleware: [errorMiddleware, csrfMiddleware],
-  functionMiddleware: [attachSupabaseAuth],
+  // attachSupabaseAuth (client) adds the bearer token; customerSafeErrors
+  // (server) hides infrastructure error text from customers.
+  functionMiddleware: [attachSupabaseAuth, customerSafeErrors],
 }));

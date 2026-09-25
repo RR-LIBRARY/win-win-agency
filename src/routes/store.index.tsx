@@ -227,11 +227,19 @@ function StorePage() {
             <p className="mt-2 text-sm text-muted-foreground">Try another type or clear the search.</p>
           </div>
         ) : (
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {shown.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <section aria-labelledby="store-products-heading" className="mt-8">
+            <h2 id="store-products-heading" className="sr-only">
+              Products
+            </h2>
+            <p className="sr-only" aria-live="polite">
+              {shown.length} {shown.length === 1 ? "product" : "products"} shown
+            </p>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {shown.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </section>
         )}
       </div>
 

@@ -17,11 +17,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DeliveryPolicyRouteImport } from './routes/delivery-policy'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as StoreRouteImport } from './routes/store'
 import { Route as TemplatesRouteImport } from './routes/templates'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAccountRouteRouteImport } from './routes/_authenticated/account/route'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as OrdersReferenceRouteImport } from './routes/orders.$reference'
@@ -88,6 +92,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeliveryPolicyRoute = DeliveryPolicyRouteImport.update({
+  id: '/delivery-policy',
+  path: '/delivery-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
@@ -96,6 +105,16 @@ const PortfolioRoute = PortfolioRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundPolicyRoute = RefundPolicyRouteImport.update({
+  id: '/refund-policy',
+  path: '/refund-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
@@ -111,6 +130,11 @@ const StoreRoute = StoreRouteImport.update({
 const TemplatesRoute = TemplatesRouteImport.update({
   id: '/templates',
   path: '/templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAccountRouteRoute =
@@ -266,11 +290,15 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/delivery-policy': typeof DeliveryPolicyRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/services': typeof ServicesRoute
   '/store': typeof StoreRouteWithChildren
   '/templates': typeof TemplatesRouteWithChildren
+  '/terms': typeof TermsRoute
   '/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/orders/$reference': typeof OrdersReferenceRoute
@@ -306,8 +334,12 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/delivery-policy': typeof DeliveryPolicyRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/services': typeof ServicesRoute
+  '/terms': typeof TermsRoute
   '/orders/$reference': typeof OrdersReferenceRoute
   '/portfolio/$slug': typeof PortfolioSlugRoute
   '/store/$slug': typeof StoreSlugRoute
@@ -343,11 +375,15 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/delivery-policy': typeof DeliveryPolicyRoute
   '/portfolio': typeof PortfolioRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund-policy': typeof RefundPolicyRoute
   '/services': typeof ServicesRoute
   '/store': typeof StoreRouteWithChildren
   '/templates': typeof TemplatesRouteWithChildren
+  '/terms': typeof TermsRoute
   '/_authenticated/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/orders/$reference': typeof OrdersReferenceRoute
@@ -385,11 +421,15 @@ export interface FileRouteTypes {
     | '/book'
     | '/checkout'
     | '/contact'
+    | '/delivery-policy'
     | '/portfolio'
     | '/pricing'
+    | '/privacy'
+    | '/refund-policy'
     | '/services'
     | '/store'
     | '/templates'
+    | '/terms'
     | '/account'
     | '/admin'
     | '/orders/$reference'
@@ -425,8 +465,12 @@ export interface FileRouteTypes {
     | '/book'
     | '/checkout'
     | '/contact'
+    | '/delivery-policy'
     | '/pricing'
+    | '/privacy'
+    | '/refund-policy'
     | '/services'
+    | '/terms'
     | '/orders/$reference'
     | '/portfolio/$slug'
     | '/store/$slug'
@@ -461,11 +505,15 @@ export interface FileRouteTypes {
     | '/book'
     | '/checkout'
     | '/contact'
+    | '/delivery-policy'
     | '/portfolio'
     | '/pricing'
+    | '/privacy'
+    | '/refund-policy'
     | '/services'
     | '/store'
     | '/templates'
+    | '/terms'
     | '/_authenticated/account'
     | '/_authenticated/admin'
     | '/orders/$reference'
@@ -503,11 +551,15 @@ export interface RootRouteChildren {
   BookRoute: typeof BookRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
+  DeliveryPolicyRoute: typeof DeliveryPolicyRoute
   PortfolioRoute: typeof PortfolioRouteWithChildren
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RefundPolicyRoute: typeof RefundPolicyRoute
   ServicesRoute: typeof ServicesRoute
   StoreRoute: typeof StoreRouteWithChildren
   TemplatesRoute: typeof TemplatesRouteWithChildren
+  TermsRoute: typeof TermsRoute
   OrdersReferenceRoute: typeof OrdersReferenceRoute
   ApiPublicAssistantRoute: typeof ApiPublicAssistantRoute
   ApiPublicLicenseVerifyRoute: typeof ApiPublicLicenseVerifyRoute
@@ -572,6 +624,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/delivery-policy': {
+      id: '/delivery-policy'
+      path: '/delivery-policy'
+      fullPath: '/delivery-policy'
+      preLoaderRoute: typeof DeliveryPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portfolio': {
       id: '/portfolio'
       path: '/portfolio'
@@ -584,6 +643,20 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund-policy': {
+      id: '/refund-policy'
+      path: '/refund-policy'
+      fullPath: '/refund-policy'
+      preLoaderRoute: typeof RefundPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services': {
@@ -605,6 +678,13 @@ declare module '@tanstack/react-router' {
       path: '/templates'
       fullPath: '/templates'
       preLoaderRoute: typeof TemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/account': {
@@ -907,11 +987,15 @@ const rootRouteChildren: RootRouteChildren = {
   BookRoute: BookRoute,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
+  DeliveryPolicyRoute: DeliveryPolicyRoute,
   PortfolioRoute: PortfolioRouteWithChildren,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
+  RefundPolicyRoute: RefundPolicyRoute,
   ServicesRoute: ServicesRoute,
   StoreRoute: StoreRouteWithChildren,
   TemplatesRoute: TemplatesRouteWithChildren,
+  TermsRoute: TermsRoute,
   OrdersReferenceRoute: OrdersReferenceRoute,
   ApiPublicAssistantRoute: ApiPublicAssistantRoute,
   ApiPublicLicenseVerifyRoute: ApiPublicLicenseVerifyRoute,

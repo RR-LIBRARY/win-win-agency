@@ -8,6 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import type { DeliverableRow, OrderRow } from "@/lib/db-types";
 import { generateLicenseKey } from "./license";
+import { toPaise } from "./pricing";
 
 type Admin = SupabaseClient<Database>;
 
@@ -116,7 +117,9 @@ export async function fulfilOrder(admin: Admin, orderId: string, facts: PaymentF
     throw new Error("This order was cancelled. Contact support to reactivate it.");
   }
 
-  if (typeof facts.amountPaid === "number" && facts.amountPaid !== order.amount) {
+  // Compare in paise so ₹1499.00 from Razorpay (149900 paise / 100) can never
+  // fail against ₹1499 because of binary floating point noise.
+  if (typeof facts.amountPaid === "number" && toPaise(facts.amountPaid) !== toPaise(order.amount)) {
     throw new AmountMismatchError(order.amount, facts.amountPaid);
   }
 
@@ -147,13 +150,23 @@ export async function fulfilOrder(admin: Admin, orderId: string, facts: PaymentF
 
   if (!locked || locked.length === 0) {
     // Someone else (webhook vs. checkout) got there first — report their result.
-    const { data: fresh } = await admin.from("orders").select("*").eq("id", order.id).maybeSingle();
-    const current = fresh ?? order;
+    // The winner may still be issuing the licence / invoice, so give it a moment
+    // rather than answering "no licence" to a customer who just paid.
+    let licenseKey: string | null = null;
+    let current = order;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const { data: fresh } = await admin.from("orders").select("*").eq("id", order.id).maybeSingle();
+      if (fresh) current = fresh;
+      licenseKey = await existingLicense(admin, current.id);
+      const settled = (!deliverable?.issue_license || licenseKey) && (current.invoice_number || attempt > 0);
+      if (settled || current.status === "cancelled") break;
+      await new Promise((resolve) => setTimeout(resolve, 150 * (attempt + 1)));
+    }
     return {
       order: current,
       status: current.status,
       invoiceNumber: current.invoice_number,
-      licenseKey: await existingLicense(admin, current.id),
+      licenseKey,
       alreadyFulfilled: true,
       delivered: current.status === "delivered",
     };

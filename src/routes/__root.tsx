@@ -130,6 +130,15 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  // Marks the document once React is interactive. Browser tests (and any
+  // progressive-enhancement CSS) can wait for html[data-hydrated] instead of
+  // clicking server-rendered controls that have no handlers yet.
+  useEffect(() => {
+    document.documentElement.dataset["hydrated"] = "true";
+  }, []);
+
+
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col bg-background">

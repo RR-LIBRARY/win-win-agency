@@ -12,8 +12,9 @@ export type ExternalPlatform = {
 
 export const EXTERNAL_PLATFORMS: ExternalPlatform[] = [
   { id: "gumroad", label: "Gumroad", cta: "Buy on Gumroad", hosts: ["gumroad.com"] },
+  // More specific hosts first: read.amazon.* is Kindle, everything else on amazon.* is the store.
+  { id: "kindle", label: "Kindle", cta: "Get it on Kindle", hosts: ["read.amazon."] },
   { id: "amazon", label: "Amazon", cta: "Buy on Amazon", hosts: ["amazon.", "amzn.", "kdp.amazon"] },
-  { id: "kindle", label: "Kindle", cta: "Get it on Kindle", hosts: ["read.amazon"] },
   { id: "fiverr", label: "Fiverr", cta: "Order on Fiverr", hosts: ["fiverr.com"] },
   { id: "upwork", label: "Upwork", cta: "Hire on Upwork", hosts: ["upwork.com"] },
   { id: "udemy", label: "Udemy", cta: "Enroll on Udemy", hosts: ["udemy.com"] },
@@ -49,20 +50,44 @@ export function externalHost(url: string | null | undefined): string {
   }
 }
 
+/**
+ * Does the link's hostname belong to `pattern`? Matching is anchored to the
+ * hostname (never the path or query) so `evil.com/gumroad.com` cannot dress
+ * itself up as Gumroad. Patterns:
+ *   "gumroad.com"                → gumroad.com or any subdomain of it
+ *   "amazon."                    → amazon.<anything> (amazon.in, amazon.com, …) incl. subdomains
+ *   "chrome.google.com/webstore" → hostname match + path prefix
+ */
+function hostMatches(hostname: string, pathname: string, pattern: string): boolean {
+  const [hostPattern, ...pathParts] = pattern.split("/");
+  const pathPrefix = pathParts.length ? `/${pathParts.join("/")}` : "";
+  if (!hostPattern) return false;
+  let hostOk: boolean;
+  if (hostPattern.endsWith(".")) {
+    // Country-TLD family (amazon.in / amazon.co.uk / kdp.amazon.com …)
+    hostOk = hostname.startsWith(hostPattern) || hostname.includes(`.${hostPattern}`);
+  } else {
+    hostOk = hostname === hostPattern || hostname.endsWith(`.${hostPattern}`);
+  }
+  if (!hostOk) return false;
+  return pathPrefix ? pathname.startsWith(pathPrefix) : true;
+}
+
 /** Guess the platform from a pasted link. Falls back to "other" (label = website hostname). */
 export function detectPlatform(url: string | null | undefined): ExternalPlatform {
-  const host = externalHost(url);
-  if (!host) return platformById("other");
-  const full = (() => {
-    try {
-      const u = new URL(url!);
-      return `${u.hostname}${u.pathname}`.toLowerCase();
-    } catch {
-      return host;
-    }
-  })();
+  if (!url) return platformById("other");
+  let hostname: string;
+  let pathname: string;
+  try {
+    const u = new URL(url);
+    hostname = u.hostname.toLowerCase().replace(/^www\./, "");
+    pathname = u.pathname.toLowerCase();
+  } catch {
+    return platformById("other");
+  }
+  if (!hostname) return platformById("other");
   for (const platform of EXTERNAL_PLATFORMS) {
-    if (platform.hosts.some((h) => full.includes(h))) return platform;
+    if (platform.hosts.some((pattern) => hostMatches(hostname, pathname, pattern))) return platform;
   }
   return platformById("other");
 }

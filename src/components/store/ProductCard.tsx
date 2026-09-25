@@ -62,7 +62,7 @@ export function ProductCard({ product }: { product: PublicTemplate }) {
           <span className="inline-flex shrink-0 items-center gap-1">
             <Star className="h-3.5 w-3.5 fill-current text-chart-4" />
             {Number(product.rating).toFixed(1)}
-            <span className="text-muted-foreground/70">({product.sales_count})</span>
+            <span className="text-muted-foreground">({product.sales_count})</span>
           </span>
         </div>
         <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{product.title}</h3>

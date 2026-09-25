@@ -59,6 +59,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-primary-glow: var(--primary-glow);
+  --color-primary-deep: var(--primary-deep);
   --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --shadow-card: 0 1px 2px oklch(0.27 0.05 268 / 6%), 0 12px 32px -18px oklch(0.27 0.05 268 / 22%);
@@ -72,32 +74,34 @@
   --card-foreground: oklch(0.272 0.049 268.2);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.272 0.049 268.2);
-  --primary: oklch(0.623 0.188 259.8);
+  --primary: oklch(0.53 0.21 262);
+  --primary-glow: oklch(0.72 0.16 258);
+  --primary-deep: oklch(0.42 0.19 264);
   --primary-foreground: oklch(0.995 0.002 255);
   --secondary: oklch(0.969 0.003 264.5);
   --secondary-foreground: oklch(0.272 0.049 268.2);
   --muted: oklch(0.969 0.003 264.5);
-  --muted-foreground: oklch(0.525 0.026 267);
+  --muted-foreground: oklch(0.5 0.03 264);
   --accent: oklch(0.945 0.028 258);
   --accent-foreground: oklch(0.38 0.14 259);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.995 0.002 255);
   --border: oklch(0.915 0.006 264.5);
   --input: oklch(0.915 0.006 264.5);
-  --ring: oklch(0.623 0.188 259.8);
-  --chart-1: oklch(0.623 0.188 259.8);
+  --ring: oklch(0.53 0.21 262);
+  --chart-1: oklch(0.53 0.21 262);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.969 0.003 264.5);
   --sidebar-foreground: oklch(0.272 0.049 268.2);
-  --sidebar-primary: oklch(0.623 0.188 259.8);
+  --sidebar-primary: oklch(0.53 0.21 262);
   --sidebar-primary-foreground: oklch(0.995 0.002 255);
   --sidebar-accent: oklch(0.945 0.028 258);
   --sidebar-accent-foreground: oklch(0.38 0.14 259);
   --sidebar-border: oklch(0.915 0.006 264.5);
-  --sidebar-ring: oklch(0.623 0.188 259.8);
+  --sidebar-ring: oklch(0.53 0.21 262);
 }
 
 .dark {
@@ -108,6 +112,8 @@
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
   --primary: oklch(0.929 0.013 255.508);
+  --primary-glow: oklch(0.8 0.1 258);
+  --primary-deep: oklch(0.7 0.12 262);
   --primary-foreground: oklch(0.208 0.042 265.755);
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
@@ -143,5 +149,32 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+
+  /* Inline links inside running text must be distinguishable without colour alone (WCAG 1.4.1). */
+  main :is(p, li, dd, blockquote, figcaption) > a:not([class*="rounded"]):not([class*="no-underline"]) {
+    text-decoration-line: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in oklab, var(--color-primary) 45%, transparent);
+  }
+  main :is(p, li, dd, blockquote, figcaption) > a:not([class*="rounded"]):hover {
+    text-decoration-color: var(--color-primary);
+  }
+
+  /* A single, visible keyboard focus style everywhere. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: max(var(--radius-sm, 4px), 2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

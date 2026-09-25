@@ -22,7 +22,7 @@ export function TrustSections() {
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {reviews.map((r) => (
               <figure key={r.name} className="rounded-2xl border border-border bg-card p-6">
-                <div className="flex gap-0.5 text-primary" aria-label={`${r.rating} out of 5`}>
+                <div className="flex gap-0.5 text-primary" role="img" aria-label={`Rated ${r.rating} out of 5`}>
                   {Array.from({ length: r.rating }).map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-current" />
                   ))}

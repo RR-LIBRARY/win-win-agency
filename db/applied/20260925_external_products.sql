@@ -1,5 +1,4 @@
--- PENDING: apply through the Lovable database migration tool once the Supabase project
--- `Win Win Agency` (cgygrzuacnbuilqyqemk) is linked again. Kept here so the change is not lost.
+-- APPLIED 2026-09-25 06:10 UTC to Supabase `Win Win Agency` (cgygrzuacnbuilqyqemk) via the Lovable migration tool. Kept for reference only.
 -- ============ EXTERNAL PRODUCTS (Gumroad, Amazon, Fiverr, Udemy, Play Store, ...) ============
 alter table public.templates
   add column if not exists external_url text,

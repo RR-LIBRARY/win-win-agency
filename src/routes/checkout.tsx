@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
+import { useHydrated } from "@/hooks/useHydrated";
 import { Building2, Check, CreditCard, ExternalLink, Landmark, Loader2, Lock, LogIn, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/site/PageHeader";
@@ -119,6 +120,9 @@ function CheckoutForm({ slug, initialTier }: { slug: string; initialTier: string
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
   const { data: payment } = useSuspenseQuery(paymentConfigQuery);
   const auth = useAuth();
+  // This form sits inside a Suspense boundary, which React hydrates on its own
+  // schedule; expose a per-form readiness flag for tests and enhancement CSS.
+  const hydrated = useHydrated();
   const navigate = useNavigate();
   const submit = useServerFn(placeOrder);
   const startRazorpay = useServerFn(createRazorpayCheckout);
@@ -337,7 +341,18 @@ function CheckoutForm({ slug, initialTier }: { slug: string; initialTier: string
             : "Place the order, we share payment details instantly on the order page, and your files unlock once we confirm the payment."
         }
       />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-6xl px-5 py-12 md:py-16" aria-busy={busy}>
+      <form
+        onSubmit={handleSubmit}
+        method="get"
+        action="/checkout"
+        className="mx-auto max-w-6xl px-5 py-12 md:py-16"
+        aria-busy={busy}
+        data-ready={hydrated ? "true" : undefined}
+      >
+        {/* If the form is submitted before React is interactive, the browser
+            performs a plain GET: keep the product so the buyer lands back on
+            this same checkout instead of "Pick a product first". */}
+        <input type="hidden" name="product" value={slug} />
         <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
           <section className="space-y-8">
             <div className="space-y-5">
@@ -514,8 +529,8 @@ function CheckoutForm({ slug, initialTier }: { slug: string; initialTier: string
                   <dt className="font-display font-semibold text-foreground">Total to pay</dt>
                   <dd className="font-display text-xl font-semibold text-foreground">{formatPrice(total)}</dd>
                 </div>
-                <p className="text-xs text-muted-foreground">Inclusive of all taxes · no hidden fees</p>
               </dl>
+              <p className="mt-2 text-xs text-muted-foreground">Inclusive of all taxes · no hidden fees</p>
 
               <div className="mt-4 flex gap-2">
                 <Input
@@ -565,6 +580,12 @@ function CheckoutForm({ slug, initialTier }: { slug: string; initialTier: string
               </ul>
               <p className="mt-4 inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <ShieldCheck className="h-3.5 w-3.5" /> We never see or store your card or UPI credentials.
+              </p>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                By {mode === "online" ? "paying" : "placing this order"} you agree to our{" "}
+                <Link to="/terms" className="underline hover:text-foreground">Terms</Link>,{" "}
+                <Link to="/refund-policy" className="underline hover:text-foreground">Refund policy</Link> and{" "}
+                <Link to="/delivery-policy" className="underline hover:text-foreground">Delivery policy</Link>.
               </p>
             </div>
           </aside>
