@@ -17,7 +17,7 @@ const bodySchema = z.object({
   mode: z.enum(ASSISTANT_MODE_IDS).default("business"),
   page: z.string().max(200).optional(),
   messages: z
-    .array(z.object({ id: z.string().max(80), role: z.enum(["user", "assistant", "system"]), parts: z.array(partSchema).max(40) }).passthrough())
+    .array(z.object({ id: z.string().max(80), role: z.string().max(20), parts: z.array(partSchema).max(40) }).passthrough())
     .min(1)
     .max(MAX_MESSAGES),
 });
@@ -26,18 +26,22 @@ function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 }
 
-/** Keep only text parts and drop stale tool/reasoning parts so history stays small and valid. */
+/**
+ * Only the caller's own (user) turns are trusted. Client-supplied assistant/system
+ * turns are dropped so nobody can forge what the assistant "said" earlier.
+ */
 function sanitize(messages: z.infer<typeof bodySchema>["messages"]): UIMessage[] {
   return messages
-    .filter((m) => m.role !== "system")
+    .filter((m) => m.role === "user")
     .map((m) => ({
       id: m.id,
-      role: m.role as "user" | "assistant",
+      role: "user" as const,
       parts: m.parts
         .filter((p) => p.type === "text" && typeof p.text === "string" && p.text.trim().length > 0)
         .map((p) => ({ type: "text" as const, text: p.text as string })),
     }))
-    .filter((m) => m.parts.length > 0);
+    .filter((m) => m.parts.length > 0)
+    .slice(-12);
 }
 
 export const Route = createFileRoute("/api/public/assistant")({
@@ -61,6 +65,8 @@ export const Route = createFileRoute("/api/public/assistant")({
         const authHeader = request.headers.get("authorization") ?? "";
         const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
         const { supabase, userId } = await createClientForToken(token);
+        // The AI model is billed per call — only signed-in users may use it.
+        if (!userId) return json(401, { error: "Please sign in to chat with the assistant." });
 
         const url = new URL(request.url);
         const forwardedProto = request.headers.get("x-forwarded-proto");

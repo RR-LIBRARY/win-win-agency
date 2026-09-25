@@ -297,8 +297,9 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
     } catch (error) {
       const { RazorpayApiError } = await import("./payments/razorpay.server");
       if (!(error instanceof RazorpayApiError)) throw error;
-      // Razorpay API unreachable — the HMAC already proves authenticity; continue.
-      amountPaid = null;
+      // Razorpay API unreachable — never fulfil on client input alone.
+      // Leave the order pending; the signed webhook / reconcile will fulfil it.
+      captured = false;
     }
 
     if (!captured) {
