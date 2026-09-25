@@ -1,3 +1,4 @@
+import { TrustSections } from "@/components/site/TrustSections";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, ArrowUpRight, Check, ExternalLink } from "lucide-react";
@@ -297,6 +298,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <TrustSections />
 
       <section>
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">

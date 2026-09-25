@@ -12,11 +12,11 @@
 - [x] Home/services/header/footer/contact refreshed for v2 lines; contact + EdTech demo driven by admin settings
 - [x] FKs to auth.users (roles/profiles cascade, orders/bookings set null) so deleted accounts free the admin slot
 
+- [x] Contact inbox (Admin > Messages), coupons (Admin > Coupons + checkout), admin menu counts, reviews/guarantees on home
+
 ## Ready (next)
 - [ ] User adds real Notion duplicate links per template in Admin > Templates (until then "Delivered" shows an email fallback)
 - [ ] Online payment (Razorpay/UPI) — later phase, currently order -> admin marks paid -> link unlocked
 - [ ] Email/WhatsApp notifications on new order/booking and on delivery
-- [ ] Contact form persistence (currently toast-only) — save to a `messages` table + admin inbox
-- [ ] Coupon codes / launch discounts for templates
 - [ ] Replace placeholder prices, contact details, portfolio screenshots and copy with real data from user
 - [ ] Optional: Supabase linter WARN "Signed-in users can execute SECURITY DEFINER function" (pre-existing, has_role is scoped to auth.uid())
