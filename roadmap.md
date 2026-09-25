@@ -47,3 +47,18 @@ Constraint: Supabase free tier → no storage uploads; videos/docs are links onl
 - [x] Checkout UI verified: form, editions, Razorpay option render correctly
 - [ ] BLOCKED: live order creation fails — SUPABASE_SERVICE_ROLE_KEY missing. User must connect Supabase "Win Win Agency" (Project Settings → Connectors → Supabase). Then: run db/pending/20260925_reviews_videos_docs.sql, then full client→payment→admin delivery E2E.
 - [ ] Razorpay webhook URL to configure in Razorpay dashboard after publish: /api/public/webhooks/razorpay
+
+## 2026-09-25 11:13 UTC — live Vercel deploy verified (winwinagency.vercel.app)
+- [x] Site live and healthy: store loads 5 products, product/checkout/legal pages render, no console errors
+- [x] Admin locked: /admin, /admin/payments, /admin/reviews, /admin/videos, /admin/templates → redirect to /auth?redirect=… (browser-verified)
+- [x] Secret files not reachable: /.env, /.env.local, /.git/config, /server/.env, /.vercel/project.json all 404
+- [x] Webhook refuses unsigned/bogus-signature posts (no fulfilment path opened)
+- [ ] BLOCKED (needs user, Vercel → Settings → Environment Variables + Redeploy):
+  - RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET missing → checkout shows only "Bank transfer / UPI", no "Pay online" option
+  - RAZORPAY_WEBHOOK_SECRET missing → /api/public/webhooks/razorpay returns 503 not_configured
+  - LOVABLE_API_KEY missing → /api/public/assistant returns 503 "not configured yet"
+- [ ] Placeholder contact data is LIVE on the site: hello@winwindigital.example + "Grievance Officer" (site_settings.contact_email default in src/lib/settings.functions.ts) — real email/grievance details needed from the user
+- [ ] Razorpay dashboard webhook: https://winwinagency.vercel.app/api/public/webhooks/razorpay (after keys are added)
+- [ ] CONFIRMED BROKEN ON LIVE: placing an order returns "The store is temporarily unavailable … (ref: STORE-CONFIG)" — a server env var is missing in the Vercel deployment, so no customer can order right now. Runtime vars the server reads: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_SERVICE_ROLE_KEY, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET, LOVABLE_API_KEY.
+- [ ] NOTE: `.env` is tracked in the repo (VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PROJECT_ID + non-VITE mirrors). Values are publishable/URLs only — no secret key inside, so no rotation needed — but the same three VITE_ vars should be set in Vercel so the build does not depend on the committed file.
+- [ ] User chose "later" for real contact email + grievance officer details (placeholder stays live for now).

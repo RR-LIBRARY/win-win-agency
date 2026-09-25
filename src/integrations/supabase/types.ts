@@ -536,6 +536,98 @@ export type Database = {
         }
         Relationships: []
       }
+      security_findings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          remediation: string
+          scan_id: string
+          severity: string
+          status: string
+          title: string
+          updated_at: string
+          verification: string
+          verification_note: string
+          verified_at: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          remediation?: string
+          scan_id: string
+          severity?: string
+          status?: string
+          title: string
+          updated_at?: string
+          verification?: string
+          verification_note?: string
+          verified_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          remediation?: string
+          scan_id?: string
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          verification?: string
+          verification_note?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_findings_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "security_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      security_scans: {
+        Row: {
+          ai_generated_at: string | null
+          ai_guidance: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          raw_input: string
+          source: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_generated_at?: string | null
+          ai_guidance?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          raw_input?: string
+          source?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_generated_at?: string | null
+          ai_guidance?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          raw_input?: string
+          source?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           key: string

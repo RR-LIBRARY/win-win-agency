@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Inbox, TicketPercent, CalendarCheck, CreditCard, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, Star, Users, Video } from "lucide-react";
+import { Inbox, TicketPercent, CalendarCheck, CreditCard, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, ShieldCheck, Star, Users, Video } from "lucide-react";
 import { PanelError, PanelLoading, PanelShell, type PanelNavItem } from "@/components/panel/PanelShell";
 import { getMyAccess } from "@/lib/admin.functions";
 import { adminCounts } from "@/lib/inbox.functions";
@@ -29,6 +29,7 @@ const baseNav: PanelNavItem[] = [
   { to: "/admin/coupons", label: "Coupons", icon: TicketPercent },
   { to: "/admin/settings", label: "Site settings", icon: Settings },
   { to: "/admin/team", label: "Team", icon: Users },
+  { to: "/admin/security", label: "Security", icon: ShieldCheck },
 ];
 
 function AdminLayout() {
