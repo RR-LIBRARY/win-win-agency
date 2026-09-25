@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { expectAccessible, gotoReady, trackErrors } from "./helpers";
+import { SECTION_READY, expectAccessible, gotoReady, trackErrors } from "./helpers";
 
 const PAGES: { path: string; title: RegExp }[] = [
   { path: "/", title: /Win Win/i },
@@ -51,6 +51,51 @@ test("header navigation reaches Services, Store, Pricing, Assistant and Contact"
     await expect(page).toHaveURL(new RegExp(`${path}/?$`));
     await expect(page.locator("main h1").first()).toBeVisible();
   }
+});
+
+test("Find your fit gives an honest recommendation in three clicks and is keyboard-friendly @mobile", async ({ page }, testInfo) => {
+  await gotoReady(page, "/", SECTION_READY);
+  const finder = page.getByRole("region", { name: /answer three questions/i });
+  await finder.scrollIntoViewIfNeeded();
+  await expect(finder.getByText("Step 1 of 3")).toBeVisible();
+
+  const pick = (label: string) => finder.locator("label", { hasText: label }).first().click();
+  await pick("Organise my work in Notion");
+  await expect(finder.getByText("Step 2 of 3")).toBeVisible();
+  await pick("Under ₹5,000");
+  await pick("This week");
+
+  // A small budget is pointed at the store, not upsold to a custom build.
+  const result = finder.getByRole("status");
+  await expect(result.getByRole("heading", { level: 3 })).toHaveText(/ready-made from the store/i);
+  await expect(result.getByRole("link", { name: /browse the store/i })).toHaveAttribute("href", /\/store\?type=notion_template/);
+  await expect(result.getByRole("link", { name: /whatsapp/i })).toHaveAttribute("href", /wa\.me\/\d+\?text=/);
+
+  // Start over, answer with the keyboard only: arrow keys move between radio options.
+  await result.getByRole("button", { name: /start over/i }).click();
+  await expect(finder.getByText("Step 1 of 3")).toBeVisible();
+  await finder.locator("input[name='fit-goal']").first().focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(finder.getByText("Step 2 of 3")).toBeVisible();
+  await finder.getByRole("button", { name: /back/i }).click();
+  await expect(finder.getByText("Step 1 of 3")).toBeVisible();
+
+  // Pricier goal + healthy budget books a real package with the total shown.
+  await pick("Launch or redo a website");
+  await pick("₹30,000 – ₹1,00,000");
+  await pick("Within a month");
+  await expect(result.getByRole("heading", { level: 3 })).toHaveText(/Websites — Standard/);
+  await expect(result.getByText("₹34,999")).toBeVisible();
+  await expect(result.getByRole("link", { name: /book standard/i })).toHaveAttribute("href", /\/book\?service=websites&pkg=web-standard/);
+  await expectAccessible(page, testInfo);
+});
+
+test("the contact page explains what happens next and never shows internal notes", async ({ page }) => {
+  await gotoReady(page, "/contact");
+  await expect(page.getByRole("heading", { name: /what happens after you write/i })).toBeVisible();
+  await expect(page.getByText(/within one working day/i).first()).toBeVisible();
+  await expect(page.getByText(/admin panel/i)).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /whatsapp us/i }).first()).toHaveAttribute("href", /wa\.me\/\d+\?text=/);
 });
 
 test("social sharing metadata is set per page", async ({ request }) => {

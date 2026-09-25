@@ -11,6 +11,7 @@ import {
   FileText,
   History,
   KeyRound,
+  MessageCircle,
   MonitorSmartphone,
   PlayCircle,
   ShieldCheck,
@@ -23,14 +24,18 @@ import { productCover } from "@/data/template-covers";
 import { categoryLabel, DELIVERY_TYPES, parseChangelog, parseFaq, parseTiers, productTypeLabel } from "@/lib/db-types";
 import { isExternalProduct, resolvePlatform, safeExternalUrl } from "@/lib/external-platforms";
 import { discountPercent } from "@/lib/payments/pricing";
+import { whatsappLink } from "@/lib/fit-finder";
 import { paymentConfigQuery } from "@/lib/payments.functions";
+import { siteSettingsQuery } from "@/lib/settings.functions";
 import { templateQuery } from "@/lib/templates.functions";
+import { StickyBuyBar } from "@/components/store/StickyBuyBar";
 
 export const Route = createFileRoute("/store/$slug")({
   loader: async ({ context, params }) => {
     const [data] = await Promise.all([
       context.queryClient.ensureQueryData(templateQuery(params.slug)),
       context.queryClient.ensureQueryData(paymentConfigQuery),
+      context.queryClient.ensureQueryData(siteSettingsQuery),
     ]);
     if (!data) throw notFound();
     return {
@@ -86,6 +91,7 @@ function ProductDetailPage() {
   const { slug } = Route.useParams();
   const { data } = useSuspenseQuery(templateQuery(slug));
   const { data: payment } = useSuspenseQuery(paymentConfigQuery);
+  const { data: settings } = useSuspenseQuery(siteSettingsQuery);
   const [activeImage, setActiveImage] = useState(0);
   const [tierId, setTierId] = useState<string | null>(null);
 
@@ -144,8 +150,9 @@ function ProductDetailPage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-5 py-10 md:py-14">
-        <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr]">
-          <div>
+        {/* Phones: gallery → buy panel → details. Desktop: two columns with the buy panel sticky on the right. */}
+        <div className="flex flex-col gap-10 lg:grid lg:grid-cols-[1.5fr_1fr] lg:grid-rows-[auto_1fr]">
+          <div className="order-1 lg:col-start-1 lg:row-start-1">
             <div className="overflow-hidden rounded-2xl border border-border bg-secondary">
               <img
                 src={images[activeImage] ?? images[0]}
@@ -199,9 +206,11 @@ function ProductDetailPage() {
                 ) : null}
               </div>
             )}
+          </div>
 
+          <div className="order-3 lg:col-start-1 lg:row-start-2">
             {specs.length > 0 ? (
-              <dl className="mt-8 grid gap-3 sm:grid-cols-2">
+              <dl className="grid gap-3 sm:grid-cols-2">
                 {specs.map((s) => {
                   const Icon = s.icon;
                   return (
@@ -217,7 +226,7 @@ function ProductDetailPage() {
               </dl>
             ) : null}
 
-            <div className="mt-10 space-y-10">
+            <div className={specs.length > 0 ? "mt-10 space-y-10" : "space-y-10"}>
               <section>
                 <h2 className="font-display text-xl font-semibold text-foreground">About {product.title}</h2>
                 <p className="mt-3 whitespace-pre-line text-muted-foreground">{product.description}</p>
@@ -340,8 +349,8 @@ function ProductDetailPage() {
             </div>
           </div>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+          <aside className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+            <div id="buy-panel" className="scroll-mt-24 rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] lg:sticky lg:top-24">
               <p className="text-xs text-muted-foreground">
                 {categoryLabel(product.category)} · {productTypeLabel(product.product_type)}
               </p>
@@ -468,8 +477,53 @@ function ProductDetailPage() {
                     ? "Payments secured by Razorpay · UPI, cards, net banking, wallets"
                     : "Pay by UPI or bank transfer after ordering"}
               </p>
+
+              <a
+                href={whatsappLink(
+                  settings.contact_whatsapp,
+                  `Hi, I'm looking at "${product.title}" on your store and want to check it fits my needs before buying. `,
+                )}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 flex min-h-11 items-center gap-3 rounded-xl border border-border bg-secondary/50 px-4 py-3 text-sm transition-colors hover:bg-secondary"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="block font-medium text-foreground">Not sure it fits? Ask before you buy</span>
+                  <span className="block text-xs text-muted-foreground">
+                    WhatsApp the team that built it — {settings.business_hours}
+                  </span>
+                </span>
+              </a>
             </div>
           </aside>
+
+          {!external ? (
+            <StickyBuyBar
+              watchId="buy-panel"
+              price={formatPrice(price)}
+              note={selectedTier ? `${product.title} · ${selectedTier.name}` : product.title}
+            >
+              <Link
+                to="/checkout"
+                search={{ product: product.slug, ...(selectedTier ? { tier: selectedTier.id } : {}) }}
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Buy now
+              </Link>
+            </StickyBuyBar>
+          ) : externalUrl ? (
+            <StickyBuyBar watchId="buy-panel" price={price > 0 ? formatPrice(price) : platform.label} note={product.title}>
+              <a
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                {platform.cta} <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </StickyBuyBar>
+          ) : null}
         </div>
 
         {related.length > 0 ? (

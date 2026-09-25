@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Mail, MessageCircle, Clock, MapPin, Navigation } from "lucide-react";
+import { Check, Mail, MessageCircle, Clock, MapPin, Navigation } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Input } from "@/components/ui/input";
@@ -136,32 +136,62 @@ function ContactPage() {
             <div className="mt-4 space-y-3 text-sm">
               <a
                 href={`mailto:${settings.contact_email}`}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex min-h-11 items-center gap-2 text-muted-foreground hover:text-foreground"
               >
-                <Mail className="h-4 w-4 text-primary" /> {settings.contact_email}
+                <Mail className="h-4 w-4 text-primary" aria-hidden="true" /> {settings.contact_email}
               </a>
               <a
-                href={`https://wa.me/${settings.contact_whatsapp}`}
+                href={`https://wa.me/${settings.contact_whatsapp}?text=${encodeURIComponent("Hi Win Win Digital, I have a question before I book: ")}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                className="flex min-h-11 items-center gap-2 text-muted-foreground hover:text-foreground"
               >
-                <MessageCircle className="h-4 w-4 text-primary" /> WhatsApp
+                <MessageCircle className="h-4 w-4 text-primary" aria-hidden="true" /> WhatsApp us — fastest for quick questions
               </a>
               <p className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="h-4 w-4 text-primary" /> {settings.business_hours}
+                <Clock className="h-4 w-4 text-primary" aria-hidden="true" /> {settings.business_hours}
               </p>
             </div>
-            <p className="mt-4 text-xs text-muted-foreground">
-              These details are editable from the admin panel under Site settings.
-            </p>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-6">
-            <h2 className="font-display text-base font-semibold text-foreground">Response time</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Replies within one working day. Bookings get a kickoff call slot within 48 hours.
-            </p>
+            <h2 className="font-display text-base font-semibold text-foreground">What happens after you write</h2>
+            <ol className="mt-4 space-y-4">
+              {[
+                ["A person reads it", "Not a bot. We read what you are trying to do, not just what you asked for."],
+                ["A straight answer within one working day", "Which package fits, what it costs all-in, and how long it takes — or an honest \u201cyou don't need us for this\u201d."],
+                ["If it makes sense, a kickoff call", "Bookings get a call slot within 48 hours to agree scope, content and dates."],
+              ].map(([title, text], i) => (
+                <li key={title} className="flex gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent font-display text-xs font-semibold text-accent-foreground"
+                  >
+                    {i + 1}
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{title}</p>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <h2 className="font-display text-base font-semibold text-foreground">Helps us reply faster</h2>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              {[
+                "What the business does and who the users are",
+                "A rough budget range, even if it is small",
+                "Any deadline that actually matters (launch, admissions, festival)",
+                "Links to anything you like or already use",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" /> {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </aside>
       </div>

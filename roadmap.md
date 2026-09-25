@@ -19,7 +19,12 @@
 - [x] Workspace moved again (05:27 UTC): Parallel + Perplexity reconnected
 - [x] Workspace moved again (05:40 UTC, user request): Parallel + Perplexity reconnected (05:44 UTC)
 - [x] Workspace moved again (06:07 UTC, user request): Parallel + Perplexity reconnected (06:09)
-- [ ] GitHub: re-link connector, then dry-run + push (scripts/github-sync.py)
+- [x] Workspace moved again (06:59 UTC): Parallel + Perplexity reconnected 07:00 UTC
+- [x] 07:01 UTC: Supabase `Win Win Agency` verified live after move — env present, REST 200 (service + anon), store renders products
+- [x] Workspace moved again (07:44 UTC, user request): Parallel + Perplexity reconnected 07:47; Supabase `Win Win Agency` verified live (service + anon REST 200, store renders)
+- [x] Premium polish shipped: Find-your-fit advisor (home), expert hero proof line, mobile product page reorder + sticky buy bar + ask-before-you-buy, contact page next-steps (internal note removed); unit 136, e2e green
+- [ ] GitHub link dropped in the 07:44 move — re-link before next push
+- [x] GitHub re-linked 06:31 UTC; pushed commit d1853ce (47 files) to RR-LIBRARY/win-win-agency main, 0 diff after
 - [x] 06:08 UTC user request: Supabase `Win Win Agency` connected + verified; external-products migration applied; live guest purchase e2e passes (order → private order page → no leak without key); e2e cleans its test orders
 - [x] Checkout hardening found by live e2e: hidden `product` field keeps the buyer on checkout if the form submits before the page is interactive; `html[data-hydrated]` + `form[data-ready]` readiness flags
 - [x] Research (Parallel + Perplexity): software store page anatomy, checkout conversion (UPI-first, single page, trust near CTA), Razorpay Orders/Checkout/Webhook guidance, license delivery, GST invoicing
@@ -52,6 +57,16 @@
 - [x] Accessibility review (Axe, WCAG 2.1 AA + best-practice) on 23 pages → 0 violations: AA-contrast primary blue + muted text, underlined inline links, visible focus rings, reduced-motion, rating role=img, store products heading + live count, product spec/checkout <dl> markup, assistant widget = real dialog (labelled, Escape closes, focus in → composer, focus back to launcher)
 - [ ] Premium/human-friendly polish: consultant-style home (clear promise, proof, process, trust), warmer copy, consistent spacing/typography rhythm, refined cards/CTAs, calm motion, empty/loading/error states
 - [ ] Verify with screenshots (desktop + mobile) and re-run unit + e2e tests after the polish
+
+## In progress — user request 07:56 UTC: single admin account
+- [x] naveenbharatprism@gmail.com is the only auth user and the only admin (roles: user, admin); password set via Auth Admin API 07:58 UTC, email confirmed, password sign-in verified (200). Do not create other admins.
+
+## In progress — user request 07:51 UTC: reviews, landing videos, product docs
+- [ ] Real reviews & ratings: `product_reviews` table (buyer-verified: only delivered orders can review, one per order), star rating + text, admin moderation (approve/hide/reply), aggregate rating/count on product cards + product page, review form in account orders + order page; landing page "What clients say" reads approved reviews (falls back to nothing, no placeholders)
+- [ ] Landing videos: `site_videos` table + `site-media` storage bucket (public) — admin uploads MP4/WebM or pastes YouTube/Vimeo link, title, caption, sort order, is_published; home page section renders a video player (native for uploads, privacy-enhanced embed for YouTube) with poster + captions/transcript field for a11y
+- [ ] Per-product docs: `product_docs` table — admin attaches PDF (upload to `product-files` private bucket, signed URL after purchase, or public toggle), Markdown (edited inline, rendered with react-markdown on the product page), Google Sheet link (published sheet URL embedded/linked); shown on product page "Documentation" tab + delivered order page; assistant knowledge reads doc titles
+- [ ] Admin panel: Reviews (moderate), Videos (upload/manage), product editor → Docs tab (add/remove/reorder)
+- [ ] Tests: unit (review eligibility, doc/video URL validation, YouTube id parsing) + e2e (home video section, product docs tab, review moderation) + Axe
 
 ## Ready (next)
 - [ ] User adds Razorpay keys (test first, then live) and sets the webhook URL in the Razorpay dashboard

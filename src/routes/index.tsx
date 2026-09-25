@@ -1,3 +1,4 @@
+import { FitFinder } from "@/components/site/FitFinder";
 import { TrustSections } from "@/components/site/TrustSections";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -101,12 +102,12 @@ function Home() {
             </div>
             <dl className="mt-10 grid max-w-md grid-cols-3 gap-6 border-t border-border pt-6">
               {[
-                ["6", "service lines"],
-                ["2 min", "to book with a price"],
-                ["INR", "clear package pricing"],
+                ["Fixed price", "in writing, before any work starts"],
+                ["1-day reply", "a straight answer within one working day"],
+                ["7-day refund", "on store purchases not as described"],
               ].map(([value, label]) => (
                 <div key={label}>
-                  <dt className="font-display text-2xl font-semibold text-foreground">{value}</dt>
+                  <dt className="font-display text-lg font-semibold text-foreground md:text-xl">{value}</dt>
                   <dd className="mt-1 text-xs text-muted-foreground">{label}</dd>
                 </div>
               ))}
@@ -163,6 +164,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <FitFinder whatsapp={settings.contact_whatsapp} />
 
       <section className="border-b border-border">
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">

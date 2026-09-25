@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { CHECKOUT_READY, FIRST_PRODUCT_SLUG, expectAccessible, gotoReady, trackErrors } from "./helpers";
+import { CHECKOUT_READY, FIRST_PRODUCT_SLUG, SECTION_READY, expectAccessible, gotoReady, trackErrors } from "./helpers";
 
 test.describe("Software store", () => {
   test("lists products, filters by search and sorts by price", async ({ page }, testInfo) => {
     const errors = trackErrors(page);
-    await gotoReady(page, "/store");
+    await gotoReady(page, "/store", SECTION_READY);
     await expect(page.locator("main h1")).toBeVisible();
 
     const cards = page.locator('main a[href^="/store/"]');
@@ -123,6 +123,37 @@ test.describe("Software store", () => {
     // No horizontal overflow on a phone.
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);
+  });
+
+  test("on a phone the buy panel comes right after the photos and a buy bar follows the reader @mobile", async ({ page }, testInfo) => {
+    // Desktop keeps the buy panel pinned in the right column, so the bar is a phone-only feature.
+    test.skip(testInfo.project.name !== "mobile-chromium", "phone layout only");
+    await gotoReady(page, `/store/${FIRST_PRODUCT_SLUG}`);
+    // Title + price are above the long spec/description block on small screens.
+    const h1 = page.locator("main h1").first();
+    const about = page.getByRole("heading", { level: 2, name: /^About / });
+    const h1Y = (await h1.boundingBox())?.y ?? Number.POSITIVE_INFINITY;
+    const aboutY = (await about.boundingBox())?.y ?? 0;
+    expect(h1Y).toBeLessThan(aboutY);
+
+    // Sticky bar is hidden until the panel scrolls out of view, then offers the same Buy now.
+    const bar = page.locator("div.fixed.inset-x-0.bottom-0");
+    await expect(bar).toHaveAttribute("aria-hidden", "true");
+    await about.scrollIntoViewIfNeeded();
+    await page.mouse.wheel(0, 1600);
+    await expect(bar).toHaveAttribute("aria-hidden", "false");
+    const stickyBuy = bar.getByRole("link", { name: /buy now/i });
+    await expect(stickyBuy).toBeVisible();
+    expect(((await stickyBuy.boundingBox())?.height ?? 0)).toBeGreaterThanOrEqual(44);
+    await stickyBuy.click();
+    await expect(page).toHaveURL(new RegExp(`/checkout\\?product=${FIRST_PRODUCT_SLUG}`));
+  });
+
+  test("the product page offers a way to ask a human before buying", async ({ page }) => {
+    await gotoReady(page, `/store/${FIRST_PRODUCT_SLUG}`);
+    const ask = page.getByRole("link", { name: /ask before you buy/i });
+    await expect(ask).toBeVisible();
+    await expect(ask).toHaveAttribute("href", /wa\.me\/\d+\?text=/);
   });
 });
 

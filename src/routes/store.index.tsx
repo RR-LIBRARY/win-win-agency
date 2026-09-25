@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { useHydrated } from "@/hooks/useHydrated";
 import { ArrowRight, BadgeCheck, Download, KeyRound, RefreshCw, Search, ShieldCheck, Zap } from "lucide-react";
 import { PageHeader } from "@/components/site/PageHeader";
 import { ProductCard } from "@/components/store/ProductCard";
@@ -80,6 +81,7 @@ function StorePage() {
   const navigate = Route.useNavigate();
   const [category, setCategory] = useState<string>("all");
   const [sort, setSort] = useState<SortKey>("featured");
+  const hydrated = useHydrated();
   const type = search.type ?? "all";
   const query = search.q ?? "";
 
@@ -157,7 +159,7 @@ function StorePage() {
         </div>
       </PageHeader>
 
-      <div className="mx-auto max-w-6xl px-5 py-10 md:py-14">
+      <div className="mx-auto max-w-6xl px-5 py-10 md:py-14" data-ready={hydrated ? "true" : undefined}>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => setType("all")} className={pill(type === "all")}>
             Everything

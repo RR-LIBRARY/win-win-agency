@@ -16,6 +16,8 @@ export async function gotoReady(page: Page, path: string, readySelector?: string
 }
 
 export const CHECKOUT_READY = "form[data-ready='true']";
+/** Any interactive section that flags itself hydrated (store filters, Find-your-fit wizard). */
+export const SECTION_READY = "[data-ready='true']";
 
 /** Collects console errors + page crashes so every spec can assert a clean run. */
 export function trackErrors(page: Page) {
