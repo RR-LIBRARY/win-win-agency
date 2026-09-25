@@ -35,19 +35,15 @@ export function createPublicClient(): SupabaseClient<Database> {
 }
 
 /**
- * Client for public server functions that *may* be called by a signed-in user.
- * If a valid bearer token is on the request, RLS runs as that user and
- * `userId` is set; otherwise it behaves like the anonymous client.
+ * Build a client for an explicit bearer token. Returns the anonymous client
+ * when the token is missing or invalid. Used by server routes that read the
+ * Authorization header themselves (e.g. the assistant API).
  */
-export async function createOptionalUserClient(): Promise<{
+export async function createClientForToken(token: string | null | undefined): Promise<{
   supabase: SupabaseClient<Database>;
   userId: string | null;
 }> {
   const { url, key } = env();
-  const request = getRequest();
-  const header = request?.headers?.get("authorization") ?? "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-
   if (token && token.split(".").length === 3) {
     const supabase = createClient<Database>(url, key, {
       global: { fetch: supabaseFetch(key), headers: { Authorization: `Bearer ${token}` } },
@@ -58,8 +54,22 @@ export async function createOptionalUserClient(): Promise<{
       return { supabase, userId: data.claims.sub };
     }
   }
-
   return { supabase: createPublicClient(), userId: null };
+}
+
+/**
+ * Client for public server functions that *may* be called by a signed-in user.
+ * If a valid bearer token is on the request, RLS runs as that user and
+ * `userId` is set; otherwise it behaves like the anonymous client.
+ */
+export async function createOptionalUserClient(): Promise<{
+  supabase: SupabaseClient<Database>;
+  userId: string | null;
+}> {
+  const request = getRequest();
+  const header = request?.headers?.get("authorization") ?? "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+  return createClientForToken(token);
 }
 
 export function makeReference(prefix: string) {

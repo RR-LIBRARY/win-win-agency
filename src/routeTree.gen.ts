@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as CheckoutRouteImport } from './routes/checkout'
@@ -42,6 +43,7 @@ import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin/team'
+import { Route as ApiPublicAssistantRouteImport } from './routes/api/public/assistant'
 import { Route as AuthenticatedAdminTemplatesIndexRouteImport } from './routes/_authenticated/admin/templates/index'
 import { Route as AuthenticatedAdminTemplatesIdRouteImport } from './routes/_authenticated/admin/templates/$id'
 import { Route as ApiPublicLicenseVerifyRouteImport } from './routes/api/public/license/verify'
@@ -59,6 +61,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -222,6 +229,11 @@ const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const ApiPublicAssistantRoute = ApiPublicAssistantRouteImport.update({
+  id: '/api/public/assistant',
+  path: '/api/public/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminTemplatesIndexRoute =
   AuthenticatedAdminTemplatesIndexRouteImport.update({
     id: '/templates/',
@@ -249,6 +261,7 @@ const ApiPublicWebhooksRazorpayRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/checkout': typeof CheckoutRoute
@@ -277,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/templates/$id': typeof AuthenticatedAdminTemplatesIdRoute
@@ -287,6 +301,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/checkout': typeof CheckoutRoute
@@ -310,6 +325,7 @@ export interface FileRoutesByTo {
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/templates/$id': typeof AuthenticatedAdminTemplatesIdRoute
@@ -322,6 +338,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/checkout': typeof CheckoutRoute
@@ -350,6 +367,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/templates/$id': typeof AuthenticatedAdminTemplatesIdRoute
@@ -362,6 +380,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/assistant'
     | '/auth'
     | '/book'
     | '/checkout'
@@ -390,6 +409,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/settings'
     | '/admin/team'
+    | '/api/public/assistant'
     | '/account/'
     | '/admin/'
     | '/admin/templates/$id'
@@ -400,6 +420,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/assistant'
     | '/auth'
     | '/book'
     | '/checkout'
@@ -423,6 +444,7 @@ export interface FileRouteTypes {
     | '/admin/payments'
     | '/admin/settings'
     | '/admin/team'
+    | '/api/public/assistant'
     | '/account'
     | '/admin'
     | '/admin/templates/$id'
@@ -434,6 +456,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/assistant'
     | '/auth'
     | '/book'
     | '/checkout'
@@ -462,6 +485,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/payments'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
+    | '/api/public/assistant'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/templates/$id'
@@ -474,6 +498,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AssistantRoute: typeof AssistantRoute
   AuthRoute: typeof AuthRoute
   BookRoute: typeof BookRoute
   CheckoutRoute: typeof CheckoutRoute
@@ -484,6 +509,7 @@ export interface RootRouteChildren {
   StoreRoute: typeof StoreRouteWithChildren
   TemplatesRoute: typeof TemplatesRouteWithChildren
   OrdersReferenceRoute: typeof OrdersReferenceRoute
+  ApiPublicAssistantRoute: typeof ApiPublicAssistantRoute
   ApiPublicLicenseVerifyRoute: typeof ApiPublicLicenseVerifyRoute
   ApiPublicWebhooksRazorpayRoute: typeof ApiPublicWebhooksRazorpayRoute
 }
@@ -509,6 +535,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -721,6 +754,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminTeamRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/api/public/assistant': {
+      id: '/api/public/assistant'
+      path: '/api/public/assistant'
+      fullPath: '/api/public/assistant'
+      preLoaderRoute: typeof ApiPublicAssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/templates/': {
       id: '/_authenticated/admin/templates/'
       path: '/templates'
@@ -862,6 +902,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AssistantRoute: AssistantRoute,
   AuthRoute: AuthRoute,
   BookRoute: BookRoute,
   CheckoutRoute: CheckoutRoute,
@@ -872,6 +913,7 @@ const rootRouteChildren: RootRouteChildren = {
   StoreRoute: StoreRouteWithChildren,
   TemplatesRoute: TemplatesRouteWithChildren,
   OrdersReferenceRoute: OrdersReferenceRoute,
+  ApiPublicAssistantRoute: ApiPublicAssistantRoute,
   ApiPublicLicenseVerifyRoute: ApiPublicLicenseVerifyRoute,
   ApiPublicWebhooksRazorpayRoute: ApiPublicWebhooksRazorpayRoute,
 }

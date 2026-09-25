@@ -14,10 +14,14 @@ export const SETTING_DEFAULTS = {
   store_announcement: "",
   business_legal_name: "Win Win Digital Agency",
   business_address: "",
+  business_landmark: "",
+  business_map_url: "",
+  business_map_embed_url: "",
   business_gstin: "",
   payment_upi_id: "",
   payment_bank_details: "",
   refund_policy: "7-day refund if the product doesn't work as described. Licence keys are revoked on refund.",
+  assistant_extra_knowledge: "",
 } as const;
 
 export type SettingKey = keyof typeof SETTING_DEFAULTS;
@@ -31,12 +35,19 @@ export const SETTING_LABELS: Record<SettingKey, string> = {
   business_hours: "Business hours",
   store_announcement: "Store announcement bar (leave empty to hide)",
   business_legal_name: "Legal business name (printed on invoices)",
-  business_address: "Business address (printed on invoices)",
+  business_address: "Business address (printed on invoices, contact page and told by the AI assistant)",
+  business_landmark: "Landmark / how to reach (e.g. 'Opposite City Mall, 2nd floor')",
+  business_map_url: "Google Maps link for directions (Share → Copy link)",
+  business_map_embed_url: "Google Maps embed link (Share → Embed a map → copy the src=\"…\" URL only)",
   business_gstin: "Business GSTIN (leave empty if not registered)",
   payment_upi_id: "UPI ID for bank-transfer orders (e.g. name@upi)",
   payment_bank_details: "Bank account details for bank-transfer orders",
   refund_policy: "Refund policy (shown at checkout and on receipts)",
+  assistant_extra_knowledge: "Extra facts for the AI assistant (fees, batch timings, FAQs — one per line)",
 };
+
+/** Setting keys whose values must be https links when filled. */
+export const URL_SETTING_KEYS: SettingKey[] = ["edutech_demo_url", "business_map_url", "business_map_embed_url"];
 
 const settingKeys = Object.keys(SETTING_DEFAULTS) as SettingKey[];
 
@@ -85,8 +96,12 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     for (const entry of data.entries) {
-      if (entry.key === "edutech_demo_url" && entry.value && !/^https?:\/\//i.test(entry.value)) {
-        throw new Error("The demo link must start with http:// or https://");
+      const value = entry.value.trim();
+      if (URL_SETTING_KEYS.includes(entry.key) && value && !/^https?:\/\/[^\s<>"']+$/i.test(value)) {
+        throw new Error(`${SETTING_LABELS[entry.key]} must be a plain link starting with https://`);
+      }
+      if (entry.key === "business_map_embed_url" && value && !/^https:\/\/(www\.)?google\.[a-z.]+\/maps\/embed/i.test(value) && !/^https:\/\/maps\.google\.[a-z.]+\/maps/i.test(value)) {
+        throw new Error("The embed link must be the Google Maps embed URL (starts with https://www.google.com/maps/embed)");
       }
     }
     const rows = data.entries.map((entry) => ({

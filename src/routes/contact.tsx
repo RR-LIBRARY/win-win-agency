@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Mail, MessageCircle, Clock } from "lucide-react";
+import { Mail, MessageCircle, Clock, MapPin, Navigation } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Input } from "@/components/ui/input";
@@ -165,6 +165,49 @@ function ContactPage() {
           </div>
         </aside>
       </div>
+
+      {(settings.business_address || settings.business_map_embed_url) && (
+        <div className="mx-auto max-w-6xl px-5 pb-16 md:pb-24">
+          <div className="overflow-hidden rounded-2xl border border-border bg-card">
+            <div className="grid md:grid-cols-[1fr_1.4fr]">
+              <div className="p-6 md:p-8">
+                <h2 className="font-display text-xl font-semibold text-foreground">Find us on the map</h2>
+                {settings.business_address && (
+                  <p className="mt-3 flex items-start gap-2 text-sm text-muted-foreground">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>
+                      {settings.business_address}
+                      {settings.business_landmark ? (
+                        <span className="mt-1 block text-xs">Landmark: {settings.business_landmark}</span>
+                      ) : null}
+                    </span>
+                  </p>
+                )}
+                {settings.business_map_url && (
+                  <a
+                    href={settings.business_map_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    <Navigation className="h-4 w-4" /> Get directions
+                  </a>
+                )}
+              </div>
+              {settings.business_map_embed_url && (
+                <iframe
+                  title="Win Win Digital Agency on the map"
+                  src={settings.business_map_embed_url}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="h-72 w-full border-0 md:h-full md:min-h-[320px]"
+                  allowFullScreen
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

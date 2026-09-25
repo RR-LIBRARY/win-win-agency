@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { AssistantWidget } from "@/components/assistant/AssistantWidget";
 import { siteSettingsQuery } from "@/lib/settings.functions";
 
 function NotFoundComponent() {
@@ -139,6 +140,7 @@ function RootComponent() {
         </main>
         <Footer />
       </div>
+      <AssistantWidget />
       <Toaster />
     </QueryClientProvider>
   );
