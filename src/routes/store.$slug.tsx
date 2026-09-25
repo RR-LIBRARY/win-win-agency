@@ -18,16 +18,23 @@ import {
   Star,
 } from "lucide-react";
 import { ProductCard } from "@/components/store/ProductCard";
+import { ProductDocs } from "@/components/store/ProductDocs";
+import { ProductReviews } from "@/components/store/ProductReviews";
+import { RatingStars } from "@/components/site/RatingStars";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { formatPrice } from "@/data/services";
 import { productCover } from "@/data/template-covers";
+import { reviewStats } from "@/lib/db-ext";
 import { categoryLabel, DELIVERY_TYPES, parseChangelog, parseFaq, parseTiers, productTypeLabel } from "@/lib/db-types";
+import { productDocsQuery } from "@/lib/docs.functions";
 import { isExternalProduct, resolvePlatform, safeExternalUrl } from "@/lib/external-platforms";
 import { discountPercent } from "@/lib/payments/pricing";
 import { whatsappLink } from "@/lib/fit-finder";
 import { paymentConfigQuery } from "@/lib/payments.functions";
-import { siteSettingsQuery } from "@/lib/settings.functions";
-import { templateQuery } from "@/lib/templates.functions";
+import { formatRating } from "@/lib/review-rules";
+import { productReviewsQuery } from "@/lib/reviews.functions";
+import { siteSettingsQuery, type SiteSettings } from "@/lib/settings.functions";
+import { templateQuery, type PublicTemplate } from "@/lib/templates.functions";
 import { StickyBuyBar } from "@/components/store/StickyBuyBar";
 
 export const Route = createFileRoute("/store/$slug")({
@@ -38,6 +45,10 @@ export const Route = createFileRoute("/store/$slug")({
       context.queryClient.ensureQueryData(siteSettingsQuery),
     ]);
     if (!data) throw notFound();
+    await Promise.all([
+      context.queryClient.ensureQueryData(productReviewsQuery(data.template.id)),
+      context.queryClient.ensureQueryData(productDocsQuery(data.template.id)),
+    ]);
     return {
       title: data.template.title,
       tagline: data.template.tagline,
@@ -97,6 +108,35 @@ function ProductDetailPage() {
 
   if (!data) return null;
   const { template: product, related } = data;
+  return (
+    <ProductDetailView
+      product={product}
+      related={related}
+      payment={payment}
+      settings={settings}
+      activeImage={activeImage}
+      setActiveImage={setActiveImage}
+      tierId={tierId}
+      setTierId={setTierId}
+    />
+  );
+}
+
+type ViewProps = {
+  product: PublicTemplate;
+  related: PublicTemplate[];
+  payment: { online: boolean };
+  settings: SiteSettings;
+  activeImage: number;
+  setActiveImage: (n: number) => void;
+  tierId: string | null;
+  setTierId: (id: string) => void;
+};
+
+function ProductDetailView({ product, related, payment, settings, activeImage, setActiveImage, tierId, setTierId }: ViewProps) {
+  const { data: reviewData } = useSuspenseQuery(productReviewsQuery(product.id));
+  const { data: docData } = useSuspenseQuery(productDocsQuery(product.id));
+  const liveStats = reviewData.available ? { count: reviewData.summary.count, average: reviewData.summary.average } : reviewStats(product);
   const images = [productCover(product), ...product.gallery_urls];
   const faq = parseFaq(product.faq);
   const tiers = parseTiers(product.tiers);
@@ -333,6 +373,8 @@ function ProductDetailPage() {
                 </section>
               ) : null}
 
+              {docData.available ? <ProductDocs docs={docData.docs} lockedCount={docData.buyerOnlyCount} legacyDocsUrl={product.docs_url} /> : null}
+
               {faq.length > 0 ? (
                 <section>
                   <h2 className="font-display text-xl font-semibold text-foreground">Questions</h2>
@@ -346,6 +388,8 @@ function ProductDetailPage() {
                   </Accordion>
                 </section>
               ) : null}
+
+              {!external ? <ProductReviews templateId={product.id} productTitle={product.title} /> : null}
             </div>
           </div>
 
@@ -356,10 +400,19 @@ function ProductDetailPage() {
               </p>
               <h1 className="mt-1 font-display text-2xl font-semibold text-foreground">{product.title}</h1>
               <p className="mt-2 text-sm text-muted-foreground">{product.tagline}</p>
-              <p className="mt-3 inline-flex items-center gap-1 text-sm text-muted-foreground">
-                <Star className="h-4 w-4 fill-current text-chart-4" /> {Number(product.rating).toFixed(1)} ·{" "}
-                {product.sales_count.toLocaleString("en-IN")} customers
-              </p>
+              {liveStats.count > 0 ? (
+                <a href="#reviews" className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+                  <RatingStars value={liveStats.average} size="sm" />
+                  <span>
+                    <span className="font-medium text-foreground">{formatRating(liveStats.average)}</span> · {liveStats.count} verified{" "}
+                    {liveStats.count === 1 ? "review" : "reviews"}
+                  </span>
+                </a>
+              ) : !external ? (
+                <p className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <Star className="h-4 w-4 text-chart-4" aria-hidden="true" /> New — reviews open to verified buyers
+                </p>
+              ) : null}
 
               {tiers.length > 0 ? (
                 <fieldset className="mt-5">

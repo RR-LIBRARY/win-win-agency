@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ExternalLink, FileUp, Loader2, Plus, Trash2, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 import { PanelCard, PanelError, PanelLoading } from "@/components/panel/PanelShell";
+import { ProductDocsEditor } from "@/components/panel/ProductDocsEditor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -812,6 +813,14 @@ function ProductEditorPage() {
               </div>
             </div>
           </PanelCard>
+          )}
+
+          {!isNew ? (
+            <ProductDocsEditor templateId={id} />
+          ) : (
+            <PanelCard title="Documentation (links only)" description="Save the product first, then add setup guides as Google Docs / Notion / Drive links or short Markdown guides.">
+              <p className="text-sm text-muted-foreground">Available after the first save.</p>
+            </PanelCard>
           )}
         </div>
 

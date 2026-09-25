@@ -6,6 +6,8 @@ import { CheckCircle2, Clock, CreditCard, Landmark, Loader2, MessageCircle, Prin
 import { toast } from "sonner";
 import { PageHeader } from "@/components/site/PageHeader";
 import { DeliveryPanel } from "@/components/store/DeliveryPanel";
+import { OrderDocs } from "@/components/store/OrderDocs";
+import { ReviewForm } from "@/components/store/ReviewForm";
 import { formatDate, OrderStatusBadge } from "@/components/site/StatusBadge";
 import { formatPrice } from "@/data/services";
 import { useAuth } from "@/hooks/useAuth";
@@ -249,7 +251,7 @@ function OrderDetails({ order, accessToken, startPending }: { order: OrderView; 
               </div>
 
               {isPaid ? (
-                <div className="mt-6">
+                <div className="mt-6 space-y-4">
                   <DeliveryPanel
                     orderId={order.id}
                     accessToken={accessToken}
@@ -259,6 +261,7 @@ function OrderDetails({ order, accessToken, startPending }: { order: OrderView; 
                     deliveryType={order.delivery_type}
                     status={order.status}
                   />
+                  <OrderDocs orderId={order.id} accessToken={accessToken} />
                 </div>
               ) : null}
 
@@ -348,6 +351,8 @@ function OrderDetails({ order, accessToken, startPending }: { order: OrderView; 
                 </p>
               ) : null}
             </section>
+
+            {isPaid ? <ReviewForm orderId={order.id} accessToken={accessToken} /> : null}
 
             <section className="rounded-2xl border border-border bg-card p-6 text-sm">
               <h3 className="font-display text-base font-semibold text-foreground">Keep this order handy</h3>

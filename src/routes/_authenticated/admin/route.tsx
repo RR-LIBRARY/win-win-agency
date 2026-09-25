@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Inbox, TicketPercent, CalendarCheck, CreditCard, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, Users } from "lucide-react";
+import { Inbox, TicketPercent, CalendarCheck, CreditCard, ExternalLink, LayoutDashboard, NotebookPen, Package, Settings, Star, Users, Video } from "lucide-react";
 import { PanelError, PanelLoading, PanelShell, type PanelNavItem } from "@/components/panel/PanelShell";
 import { getMyAccess } from "@/lib/admin.functions";
 import { adminCounts } from "@/lib/inbox.functions";
@@ -22,8 +22,10 @@ const baseNav: PanelNavItem[] = [
   { to: "/admin/templates", label: "Products", icon: NotebookPen },
   { to: "/admin/orders", label: "Orders", icon: Package },
   { to: "/admin/payments", label: "Payments & licences", icon: CreditCard },
+  { to: "/admin/reviews", label: "Reviews", icon: Star },
   { to: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
   { to: "/admin/messages", label: "Messages", icon: Inbox },
+  { to: "/admin/videos", label: "Videos", icon: Video },
   { to: "/admin/coupons", label: "Coupons", icon: TicketPercent },
   { to: "/admin/settings", label: "Site settings", icon: Settings },
   { to: "/admin/team", label: "Team", icon: Users },
@@ -42,6 +44,7 @@ function AdminLayout() {
     "/admin/orders": counts.data?.orders,
     "/admin/bookings": counts.data?.bookings,
     "/admin/messages": counts.data?.messages,
+    "/admin/reviews": counts.data?.reviews,
   };
   const nav = baseNav.map((item) => {
     const badge = badges[String(item.to)];

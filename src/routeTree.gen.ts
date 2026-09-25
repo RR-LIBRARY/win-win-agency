@@ -22,6 +22,7 @@ import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
+import { Route as ReviewPolicyRouteImport } from './routes/review-policy'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as StoreRouteImport } from './routes/store'
 import { Route as TemplatesRouteImport } from './routes/templates'
@@ -45,8 +46,10 @@ import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin/orders'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
+import { Route as AuthenticatedAdminReviewsRouteImport } from './routes/_authenticated/admin/reviews'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin/team'
+import { Route as AuthenticatedAdminVideosRouteImport } from './routes/_authenticated/admin/videos'
 import { Route as ApiPublicAssistantRouteImport } from './routes/api/public/assistant'
 import { Route as AuthenticatedAdminTemplatesIndexRouteImport } from './routes/_authenticated/admin/templates/index'
 import { Route as AuthenticatedAdminTemplatesIdRouteImport } from './routes/_authenticated/admin/templates/$id'
@@ -115,6 +118,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const RefundPolicyRoute = RefundPolicyRouteImport.update({
   id: '/refund-policy',
   path: '/refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewPolicyRoute = ReviewPolicyRouteImport.update({
+  id: '/review-policy',
+  path: '/review-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesRoute = ServicesRouteImport.update({
@@ -242,6 +250,12 @@ const AuthenticatedAdminPaymentsRoute =
     path: '/payments',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminReviewsRoute =
+  AuthenticatedAdminReviewsRouteImport.update({
+    id: '/reviews',
+    path: '/reviews',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -253,6 +267,12 @@ const AuthenticatedAdminTeamRoute = AuthenticatedAdminTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminVideosRoute =
+  AuthenticatedAdminVideosRouteImport.update({
+    id: '/videos',
+    path: '/videos',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const ApiPublicAssistantRoute = ApiPublicAssistantRouteImport.update({
   id: '/api/public/assistant',
   path: '/api/public/assistant',
@@ -295,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
+  '/review-policy': typeof ReviewPolicyRoute
   '/services': typeof ServicesRoute
   '/store': typeof StoreRouteWithChildren
   '/templates': typeof TemplatesRouteWithChildren
@@ -316,8 +337,10 @@ export interface FileRoutesByFullPath {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/admin/videos': typeof AuthenticatedAdminVideosRoute
   '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -338,6 +361,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
+  '/review-policy': typeof ReviewPolicyRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/orders/$reference': typeof OrdersReferenceRoute
@@ -355,8 +379,10 @@ export interface FileRoutesByTo {
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/admin/videos': typeof AuthenticatedAdminVideosRoute
   '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -380,6 +406,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund-policy': typeof RefundPolicyRoute
+  '/review-policy': typeof ReviewPolicyRoute
   '/services': typeof ServicesRoute
   '/store': typeof StoreRouteWithChildren
   '/templates': typeof TemplatesRouteWithChildren
@@ -401,8 +428,10 @@ export interface FileRoutesById {
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/reviews': typeof AuthenticatedAdminReviewsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
+  '/_authenticated/admin/videos': typeof AuthenticatedAdminVideosRoute
   '/api/public/assistant': typeof ApiPublicAssistantRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -426,6 +455,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
+    | '/review-policy'
     | '/services'
     | '/store'
     | '/templates'
@@ -447,8 +477,10 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/payments'
+    | '/admin/reviews'
     | '/admin/settings'
     | '/admin/team'
+    | '/admin/videos'
     | '/api/public/assistant'
     | '/account/'
     | '/admin/'
@@ -469,6 +501,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
+    | '/review-policy'
     | '/services'
     | '/terms'
     | '/orders/$reference'
@@ -486,8 +519,10 @@ export interface FileRouteTypes {
     | '/admin/messages'
     | '/admin/orders'
     | '/admin/payments'
+    | '/admin/reviews'
     | '/admin/settings'
     | '/admin/team'
+    | '/admin/videos'
     | '/api/public/assistant'
     | '/account'
     | '/admin'
@@ -510,6 +545,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/refund-policy'
+    | '/review-policy'
     | '/services'
     | '/store'
     | '/templates'
@@ -531,8 +567,10 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/reviews'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/team'
+    | '/_authenticated/admin/videos'
     | '/api/public/assistant'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
@@ -556,6 +594,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
+  ReviewPolicyRoute: typeof ReviewPolicyRoute
   ServicesRoute: typeof ServicesRoute
   StoreRoute: typeof StoreRouteWithChildren
   TemplatesRoute: typeof TemplatesRouteWithChildren
@@ -657,6 +696,13 @@ declare module '@tanstack/react-router' {
       path: '/refund-policy'
       fullPath: '/refund-policy'
       preLoaderRoute: typeof RefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review-policy': {
+      id: '/review-policy'
+      path: '/review-policy'
+      fullPath: '/review-policy'
+      preLoaderRoute: typeof ReviewPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services': {
@@ -820,6 +866,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/reviews': {
+      id: '/_authenticated/admin/reviews'
+      path: '/reviews'
+      fullPath: '/admin/reviews'
+      preLoaderRoute: typeof AuthenticatedAdminReviewsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -832,6 +885,13 @@ declare module '@tanstack/react-router' {
       path: '/team'
       fullPath: '/admin/team'
       preLoaderRoute: typeof AuthenticatedAdminTeamRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/videos': {
+      id: '/_authenticated/admin/videos'
+      path: '/videos'
+      fullPath: '/admin/videos'
+      preLoaderRoute: typeof AuthenticatedAdminVideosRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/api/public/assistant': {
@@ -898,8 +958,10 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminReviewsRoute: typeof AuthenticatedAdminReviewsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminTeamRoute: typeof AuthenticatedAdminTeamRoute
+  AuthenticatedAdminVideosRoute: typeof AuthenticatedAdminVideosRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminTemplatesIdRoute: typeof AuthenticatedAdminTemplatesIdRoute
   AuthenticatedAdminTemplatesIndexRoute: typeof AuthenticatedAdminTemplatesIndexRoute
@@ -912,8 +974,10 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
     AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
     AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+    AuthenticatedAdminReviewsRoute: AuthenticatedAdminReviewsRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
     AuthenticatedAdminTeamRoute: AuthenticatedAdminTeamRoute,
+    AuthenticatedAdminVideosRoute: AuthenticatedAdminVideosRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
     AuthenticatedAdminTemplatesIdRoute: AuthenticatedAdminTemplatesIdRoute,
     AuthenticatedAdminTemplatesIndexRoute:
@@ -992,6 +1056,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
+  ReviewPolicyRoute: ReviewPolicyRoute,
   ServicesRoute: ServicesRoute,
   StoreRoute: StoreRouteWithChildren,
   TemplatesRoute: TemplatesRouteWithChildren,

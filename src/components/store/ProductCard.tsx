@@ -2,9 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { ExternalLink, Star } from "lucide-react";
 import { formatPrice } from "@/data/services";
 import { productCover } from "@/data/template-covers";
+import { reviewStats } from "@/lib/db-ext";
 import { parseTiers, productTypeShort } from "@/lib/db-types";
 import { isExternalProduct, resolvePlatform } from "@/lib/external-platforms";
 import { discountPercent, startingPrice } from "@/lib/payments/pricing";
+import { formatRating } from "@/lib/review-rules";
 import type { PublicTemplate } from "@/lib/templates.functions";
 
 export function ProductCard({ product }: { product: PublicTemplate }) {
@@ -15,6 +17,9 @@ export function ProductCard({ product }: { product: PublicTemplate }) {
   const platforms = product.platforms.slice(0, 3);
   const external = isExternalProduct(product);
   const platform = external ? resolvePlatform(product) : null;
+  // Real, verified-review stats only (denormalised on the product row) — never seeded numbers.
+  const stats = reviewStats(product);
+
 
   return (
     <Link
@@ -59,11 +64,15 @@ export function ProductCard({ product }: { product: PublicTemplate }) {
                   ? `v${product.version}`
                   : "Digital download"}
           </span>
-          <span className="inline-flex shrink-0 items-center gap-1">
-            <Star className="h-3.5 w-3.5 fill-current text-chart-4" />
-            {Number(product.rating).toFixed(1)}
-            <span className="text-muted-foreground">({product.sales_count})</span>
-          </span>
+          {stats.count > 0 ? (
+            <span className="inline-flex shrink-0 items-center gap-1" aria-label={`Rated ${formatRating(stats.average)} out of 5 from ${stats.count} verified reviews`}>
+              <Star className="h-3.5 w-3.5 fill-current text-chart-4" aria-hidden="true" />
+              {formatRating(stats.average)}
+              <span className="text-muted-foreground">({stats.count})</span>
+            </span>
+          ) : (
+            <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">New</span>
+          )}
         </div>
         <h3 className="mt-2 font-display text-lg font-semibold text-foreground">{product.title}</h3>
         <p className="mt-1 line-clamp-2 flex-1 text-sm text-muted-foreground">{product.tagline}</p>

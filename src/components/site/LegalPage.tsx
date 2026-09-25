@@ -15,6 +15,7 @@ export const LEGAL_PAGES = [
   { to: "/privacy", label: "Privacy Policy" },
   { to: "/refund-policy", label: "Refund & Cancellation" },
   { to: "/delivery-policy", label: "Shipping & Delivery" },
+  { to: "/review-policy", label: "Review Guidelines" },
 ] as const;
 
 export const LEGAL_LAST_UPDATED = "25 September 2026";

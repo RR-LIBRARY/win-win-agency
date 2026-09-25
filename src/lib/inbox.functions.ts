@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createOptionalUserClient } from "./supabase-public.server";
 import { assertAdmin } from "./admin-guard.server";
 import { resolveCoupon } from "./coupons.server";
+import { asExt } from "./db-ext";
 
 // ---------- contact messages ----------
 
@@ -58,12 +59,19 @@ export const adminCounts = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const s = context.supabase;
-    const [orders, bookings, messages] = await Promise.all([
+    const [orders, bookings, messages, reviews] = await Promise.all([
       s.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending_payment"),
       s.from("bookings").select("id", { count: "exact", head: true }).eq("status", "new"),
       s.from("contact_messages").select("id", { count: "exact", head: true }).eq("is_read", false),
+      // Tolerates the reviews table not existing yet (count → 0).
+      asExt(s).from("product_reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
     ]);
-    return { orders: orders.count ?? 0, bookings: bookings.count ?? 0, messages: messages.count ?? 0 };
+    return {
+      orders: orders.count ?? 0,
+      bookings: bookings.count ?? 0,
+      messages: messages.count ?? 0,
+      reviews: reviews.error ? 0 : (reviews.count ?? 0),
+    };
   });
 
 // ---------- coupons ----------

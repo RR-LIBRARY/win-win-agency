@@ -1,75 +1,49 @@
 # Win Win Digital Agency — Roadmap
 
 ## Done
-- [x] Parallel + Perplexity connected in the current workspace (re-done after each workspace move)
-- [x] Supabase "Win Win Agency" (user's own project) linked; schema, RLS, seed templates applied
-- [x] Research (Parallel + Perplexity): Gumroad/Fiverr marketplace UX, Notion template pricing, EdTech-for-coaching features
-- [x] Service lines v2: Websites, Apps, Educational Projects, Notion Templates, Software Consulting, PDF Storage
-- [x] Notion template store (Gumroad-style), auth, user panel, admin panel, bookings, contact inbox, coupons
+- [x] Site v3 live: services, store (software + Notion + external products), Razorpay-ready checkout, licences, admin panel, AI assistant, legal pages, a11y pass (Axe 0 violations)
+- [x] Premium polish: Find-your-fit advisor, mobile product page + sticky buy bar, contact next-steps
+- [x] Tests: vitest unit 136, Playwright e2e desktop + mobile, security spec
+- [x] 2026-09-25 09:05 UTC: new workspace — Parallel + Perplexity re-linked, repo restored from GitHub main (45fd34e), preview verified against Supabase `Win Win Agency`
+- [x] Research (Parallel + Perplexity): social-proof placement, verified-review UX, BIS IS 19000:2022 online-review requirements (published criteria, author consent, verified identity, no purchased reviews, moderation against published criteria)
 
-## In progress — Software store v3 (deep research + Razorpay)
-- [x] Workspace moved (03:37 UTC): Parallel, Perplexity and GitHub reconnected; Supabase `Win Win Agency` verified still linked (REST + service role OK)
-- [x] Workspace moved again (03:51 UTC): Parallel + Perplexity reconnected
-- [x] Supabase `Win Win Agency` re-verified (REST 200, bucket `product-files` present); GitHub re-linked (03:53 UTC)
-- [x] Workspace moved again (04:06 UTC): Parallel, Perplexity, GitHub reconnected; Supabase verified (REST 200)
-- [x] Workspace moved again (04:17 UTC): Parallel, Perplexity, GitHub reconnected
-- [x] Supabase `Win Win Agency` relinked by user 06:08 UTC; REST 200, `product-files` bucket present, service role live; `db/applied/20260925_external_products.sql` applied via migration tool 06:10 UTC
-- [x] 04:41 GitHub: Lovable git-sync had stopped at 01:48 UTC (workspace moves). Pushed commit 31a14be to RR-LIBRARY/win-win-agency main via GitHub API (`scripts/github-sync.py`, 58 files). Verified 0 diff. Re-run the script after every milestone.
-- [x] Workspace moved again (04:38 UTC): Parallel, Perplexity, GitHub reconnected; Supabase still unlinked (user action pending)
-- [x] Workspace moved again (05:27 UTC): Parallel + Perplexity reconnected
-- [x] Workspace moved again (05:40 UTC, user request): Parallel + Perplexity reconnected (05:44 UTC)
-- [x] Workspace moved again (06:07 UTC, user request): Parallel + Perplexity reconnected (06:09)
-- [x] Workspace moved again (06:59 UTC): Parallel + Perplexity reconnected 07:00 UTC
-- [x] 07:01 UTC: Supabase `Win Win Agency` verified live after move — env present, REST 200 (service + anon), store renders products
-- [x] Workspace moved again (07:44 UTC, user request): Parallel + Perplexity reconnected 07:47; Supabase `Win Win Agency` verified live (service + anon REST 200, store renders)
-- [x] Premium polish shipped: Find-your-fit advisor (home), expert hero proof line, mobile product page reorder + sticky buy bar + ask-before-you-buy, contact page next-steps (internal note removed); unit 136, e2e green
-- [ ] GitHub link dropped in the 07:44 move — re-link before next push
-- [x] GitHub re-linked 06:31 UTC; pushed commit d1853ce (47 files) to RR-LIBRARY/win-win-agency main, 0 diff after
-- [x] 06:08 UTC user request: Supabase `Win Win Agency` connected + verified; external-products migration applied; live guest purchase e2e passes (order → private order page → no leak without key); e2e cleans its test orders
-- [x] Checkout hardening found by live e2e: hidden `product` field keeps the buyer on checkout if the form submits before the page is interactive; `html[data-hydrated]` + `form[data-ready]` readiness flags
-- [x] Research (Parallel + Perplexity): software store page anatomy, checkout conversion (UPI-first, single page, trust near CTA), Razorpay Orders/Checkout/Webhook guidance, license delivery, GST invoicing
-- [x] Schema: products (software fields, tiers, changelog), orders (Razorpay ids, tier, invoice no., access token), payment_events (idempotent webhook log), license_keys — applied 03:32 UTC
-- [x] Razorpay: server-side order creation, signature verification, webhook (HMAC, idempotent), reconcile-with-Razorpay fallback, graceful manual fallback when keys are missing (code done; live keys still needed)
-- [x] Auto-delivery on payment: Notion link / download / license key; guest order page via secure access link; invoice number + printable receipt
-- [x] Store UI v3: /store + /store/$slug (tiers, changelog, tech stack, demo), single-page checkout, order success page, account + admin updates, /templates redirects
-- [x] Seed 4 software products with covers
-- [x] Customer-safe error middleware (global): infrastructure errors (missing keys, DB, network) never reach customers — calm message + STORE-* reference code, real error logged server-side
-- [x] Legal/compliance pages (research-driven, Razorpay activation + Consumer Protection E-Commerce Rules + DPDP): /terms, /privacy, /refund-policy, /delivery-policy, grievance officer + business identity in footer/settings, policy consent line on checkout
-- [x] Tests: vitest unit — 9 files / 125 tests (signatures, webhook idempotency, pricing, licence format + atomic activation, fulfilment concurrency, external platforms, settings/catalog, customer-safe errors); Playwright e2e — 32 pass on desktop + mobile (public pages + Axe a11y, store/checkout, security headers/endpoints); 2 flows gated behind E2E_FULL=1 (need backend + Razorpay test keys)
-- [x] Security fix: atomic (compare-and-swap) licence activation counter in /api/public/license/verify
-- [ ] Audits: senior-architect review, red-team pass on payment/webhook/IDOR, Supabase linter
-- [x] Backup tarball to Files (win-win-agency-backup/…-0445.tar.gz); memory notes
-- [ ] Request RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET / RAZORPAY_WEBHOOK_SECRET from user (after Supabase relink)
+## Workspace move (09:19 UTC) — re-link connectors
+- [x] 09:21 UTC: Parallel, Perplexity and GitHub re-linked in the new workspace (new connection ids; old ones void)
+- [x] 09:41 UTC: workspace move #3 — Parallel + Perplexity re-linked (GitHub: re-link before next push)
+- [x] 09:30 UTC: workspace move #2 — Parallel, Perplexity, GitHub re-linked again (ids in memory)
+- [x] 10:30 UTC: Supabase "Win Win Agency" connected; reviews/videos/docs tables applied via migration; SQL moved to db/applied/
 
-## In progress — AI assistant & agents (user request 04:10 UTC)
-- [x] Business AI assistant (site-wide widget + /assistant page): answers address/directions (map link), service fee structure, product rates, delivery & refund policy, contact/hours — grounded in live catalog + settings via tools (verified end-to-end 05:10 UTC: tool call → live products → answer)
-- [x] Personal agent mode for signed-in users: my orders / payment status / download & licence help / bookings (auth-scoped tools, RLS)
-- [x] Doubt assistant mode (students/coaching): step-by-step doubt solving in Hindi/English
-- [x] Rule enforced in tools + copy: digital products never delivered before payment; paid orders unlock instantly (already the fulfilment design)
-- [x] Address on map: business address + map embed/directions link on contact page + assistant answers (shows once admin saves address/map URL in settings)
-- [x] GitHub: automatic sync is NOT reliable after workspace moves — use `python3 scripts/github-sync.py` (dry-run first) after each milestone; connector re-linked after each move
+## In progress — link-only media + real reviews (user request 09:02 UTC)
+Constraint: Supabase free tier → no storage uploads; videos/docs are links only; minimal extra queries (denormalised review stats on templates).
+- [x] Migration applied (product_reviews, site_videos, product_docs + review stats): product_reviews (verified-purchase, moderation, admin reply, stats trigger → templates.review_count/review_avg), site_videos (YouTube/Vimeo link), product_docs (link or Markdown, public/buyers)
+- [ ] Pure libs + unit tests: video-links (YouTube/Vimeo parsing, nocookie embed, poster), doc-links (Google Docs/Sheets/Slides/Drive/Notion/PDF/GitHub detection + preview URL), review rules (eligibility, criteria, sanitising)
+- [ ] Server functions: reviews (public list, featured, submit for delivered orders — signed-in or guest key, admin moderate), videos (public by placement, admin CRUD), docs (public + buyer docs, admin CRUD)
+- [ ] Public UI: lite privacy-enhanced video embed (click-to-load, transcript), home video section, home "What clients say" from approved reviews (hidden when none), product page Reviews + Documentation sections, real rating on cards/buy panel
+- [ ] Buyer UI: review form + status on order page and account orders (verified purchase, criteria consent), docs list on delivered orders
+- [ ] Admin: Reviews page (moderate/reply), Videos page (paste link → preview, publish, order), product editor Documentation section, nav + pending-review badge
+- [ ] Graceful degradation until the migration is applied (missing tables → empty sections, no errors)
+- [ ] Verify: build OK, unit tests, e2e + Axe, desktop + mobile screenshots
+- [ ] Push to GitHub main via scripts/github-sync.py
 
-## In progress — user request 04:25 UTC
-- [ ] Fix login ("Jkao am chal rha hai" — screenshot uploaded): reproduce sign-in flow, fix root cause
-- [ ] External digital products: admin can paste a link (Gumroad, Amazon book, Fiverr gig, Udemy, Play Store, etc.) → product card in the store that opens the external page ("Buy on Gumroad"), no checkout/delivery inside the site; platform auto-detected from URL; badge + icon; also allow more link types (YouTube course, blog, GitHub)
-
-## In progress — Premium "expert consultant" UX/UI + accessibility (user request 05:33 UTC)
-- [x] Accessibility review (Axe, WCAG 2.1 AA + best-practice) on 23 pages → 0 violations: AA-contrast primary blue + muted text, underlined inline links, visible focus rings, reduced-motion, rating role=img, store products heading + live count, product spec/checkout <dl> markup, assistant widget = real dialog (labelled, Escape closes, focus in → composer, focus back to launcher)
-- [ ] Premium/human-friendly polish: consultant-style home (clear promise, proof, process, trust), warmer copy, consistent spacing/typography rhythm, refined cards/CTAs, calm motion, empty/loading/error states
-- [ ] Verify with screenshots (desktop + mobile) and re-run unit + e2e tests after the polish
-
-## In progress — user request 07:56 UTC: single admin account
-- [x] naveenbharatprism@gmail.com is the only auth user and the only admin (roles: user, admin); password set via Auth Admin API 07:58 UTC, email confirmed, password sign-in verified (200). Do not create other admins.
-
-## In progress — user request 07:51 UTC: reviews, landing videos, product docs
-- [ ] Real reviews & ratings: `product_reviews` table (buyer-verified: only delivered orders can review, one per order), star rating + text, admin moderation (approve/hide/reply), aggregate rating/count on product cards + product page, review form in account orders + order page; landing page "What clients say" reads approved reviews (falls back to nothing, no placeholders)
-- [ ] Landing videos: `site_videos` table + `site-media` storage bucket (public) — admin uploads MP4/WebM or pastes YouTube/Vimeo link, title, caption, sort order, is_published; home page section renders a video player (native for uploads, privacy-enhanced embed for YouTube) with poster + captions/transcript field for a11y
-- [ ] Per-product docs: `product_docs` table — admin attaches PDF (upload to `product-files` private bucket, signed URL after purchase, or public toggle), Markdown (edited inline, rendered with react-markdown on the product page), Google Sheet link (published sheet URL embedded/linked); shown on product page "Documentation" tab + delivered order page; assistant knowledge reads doc titles
-- [ ] Admin panel: Reviews (moderate), Videos (upload/manage), product editor → Docs tab (add/remove/reorder)
-- [ ] Tests: unit (review eligibility, doc/video URL validation, YouTube id parsing) + e2e (home video section, product docs tab, review moderation) + Axe
+## Goal (09:29 UTC) — end-to-end order flow + premium UI + Razorpay
+- [ ] Razorpay: explain keys needed (Key ID, Key Secret, Webhook Secret), open the secure form; wire secrets into existing razorpay.server.ts; webhook URL for the dashboard; test-mode verification
+- [ ] Act as client: browse → product → checkout → order page (bank transfer + Razorpay test) → review link; screenshots desktop + mobile
+- [ ] Act as admin: sign in as naveenbharatprism@gmail.com → orders → mark paid/delivered → licence/delivery → moderate review → reply; verify buyer sees delivery + docs
+- [ ] Premium UI pass: hero, store cards, product page, checkout, order page, admin polish; motion respecting reduced-motion; AA contrast; Axe 0 serious/critical
+- [ ] Record blockers needing the user (Supabase link for migration, Razorpay keys, admin password/session)
 
 ## Ready (next)
+- [x] Supabase linked + migration applied; checkout verified live (order row + Razorpay order created in test mode)
 - [ ] User adds Razorpay keys (test first, then live) and sets the webhook URL in the Razorpay dashboard
 - [ ] Email/WhatsApp notifications on paid order + delivery (needs an email provider connection)
+- [ ] Assistant knowledge: include product doc titles + review summary
 - [ ] Replace placeholder prices, contact details, GSTIN, portfolio screenshots and copy with real data
-- [ ] Optional: Supabase linter WARN "Signed-in users can execute SECURITY DEFINER function" (pre-existing, has_role scoped to auth.uid())
+- [ ] Audits: senior-architect review, red-team pass on payment/webhook/IDOR, Supabase linter
+
+## 2026-09-25 Razorpay + E2E status
+- [x] GitHub re-linked in new workspace (std_01m3bzj96kfnzav1n8a1n5fgqh)
+- [x] Razorpay secrets saved: RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET
+- [x] Typecheck clean, 185/185 unit tests pass, build OK
+- [x] Checkout UI verified: form, editions, Razorpay option render correctly
+- [ ] BLOCKED: live order creation fails — SUPABASE_SERVICE_ROLE_KEY missing. User must connect Supabase "Win Win Agency" (Project Settings → Connectors → Supabase). Then: run db/pending/20260925_reviews_videos_docs.sql, then full client→payment→admin delivery E2E.
+- [ ] Razorpay webhook URL to configure in Razorpay dashboard after publish: /api/public/webhooks/razorpay

@@ -4,6 +4,8 @@ import { CreditCard, MessageCircle, Receipt } from "lucide-react";
 import { PanelCard, PanelEmpty, PanelError, PanelLoading } from "@/components/panel/PanelShell";
 import { OrderStatusBadge, formatDate } from "@/components/site/StatusBadge";
 import { DeliveryPanel } from "@/components/store/DeliveryPanel";
+import { OrderDocs } from "@/components/store/OrderDocs";
+import { ReviewForm } from "@/components/store/ReviewForm";
 import { formatPrice } from "@/data/services";
 import { productTypeLabel } from "@/lib/db-types";
 import { myOrders } from "@/lib/orders.functions";
@@ -80,7 +82,7 @@ function MyOrdersPage() {
                 <p className="text-sm font-medium text-foreground">
                   {order.status === "delivered" ? "Your product is ready" : "Payment received"}
                 </p>
-                <div className="mt-3">
+                <div className="mt-3 space-y-3">
                   <DeliveryPanel
                     orderId={order.id}
                     deliverable={order.deliverable}
@@ -89,12 +91,19 @@ function MyOrdersPage() {
                     deliveryType={order.delivery_type}
                     status={order.status}
                   />
+                  <OrderDocs orderId={order.id} />
                 </div>
                 {order.status === "delivered" && !order.deliverable ? (
                   <p className="mt-2 text-sm text-muted-foreground">
                     The files were sent to your email. Can't find them? WhatsApp us with reference {order.reference}.
                   </p>
                 ) : null}
+              </div>
+            ) : null}
+
+            {order.status === "paid" || order.status === "delivered" ? (
+              <div className="mt-4">
+                <ReviewForm orderId={order.id} />
               </div>
             ) : null}
 

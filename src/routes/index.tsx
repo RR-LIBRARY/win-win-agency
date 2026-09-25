@@ -1,5 +1,6 @@
 import { FitFinder } from "@/components/site/FitFinder";
 import { TrustSections } from "@/components/site/TrustSections";
+import { VideoSection } from "@/components/site/VideoSection";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight, ArrowUpRight, Check, ExternalLink } from "lucide-react";
@@ -8,6 +9,8 @@ import { services, formatPrice } from "@/data/services";
 import { projects } from "@/data/projects";
 import { templatesQuery } from "@/lib/templates.functions";
 import { siteSettingsQuery } from "@/lib/settings.functions";
+import { featuredReviewsQuery } from "@/lib/reviews.functions";
+import { siteVideosQuery } from "@/lib/videos.functions";
 import { ProductCard } from "@/components/store/ProductCard";
 
 export const Route = createFileRoute("/")({
@@ -15,6 +18,8 @@ export const Route = createFileRoute("/")({
     await Promise.all([
       context.queryClient.ensureQueryData(templatesQuery),
       context.queryClient.ensureQueryData(siteSettingsQuery),
+      context.queryClient.ensureQueryData(featuredReviewsQuery),
+      context.queryClient.ensureQueryData(siteVideosQuery("home")),
     ]);
   },
   head: () => ({
@@ -61,6 +66,7 @@ function Home() {
   const featured = projects.slice(0, 3);
   const { data: templates } = useSuspenseQuery(templatesQuery);
   const { data: settings } = useSuspenseQuery(siteSettingsQuery);
+  const { data: reviews } = useSuspenseQuery(featuredReviewsQuery);
   const featuredTemplates = [...templates]
     .sort(
       (a, b) =>
@@ -306,7 +312,9 @@ function Home() {
         </div>
       </section>
 
-      <TrustSections />
+      <VideoSection placement="home" heading="See how we work" intro="Short walkthroughs of real projects and products — no sales pitch." />
+
+      <TrustSections reviews={reviews} />
 
       <section>
         <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">

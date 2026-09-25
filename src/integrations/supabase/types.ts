@@ -390,6 +390,125 @@ export type Database = {
           },
         ]
       }
+      product_docs: {
+        Row: {
+          content_md: string
+          created_at: string
+          id: string
+          kind: string
+          provider: string
+          sort_order: number
+          template_id: string
+          title: string
+          updated_at: string
+          url: string
+          visibility: string
+        }
+        Insert: {
+          content_md?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          provider?: string
+          sort_order?: number
+          template_id: string
+          title: string
+          updated_at?: string
+          url?: string
+          visibility?: string
+        }
+        Update: {
+          content_md?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          provider?: string
+          sort_order?: number
+          template_id?: string
+          title?: string
+          updated_at?: string
+          url?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_docs_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_reviews: {
+        Row: {
+          accepted_terms: boolean
+          admin_reply: string
+          author_name: string
+          body: string
+          created_at: string
+          id: string
+          order_id: string
+          rating: number
+          replied_at: string | null
+          status: string
+          template_id: string
+          title: string
+          updated_at: string
+          user_id: string | null
+          verified_purchase: boolean
+        }
+        Insert: {
+          accepted_terms?: boolean
+          admin_reply?: string
+          author_name?: string
+          body?: string
+          created_at?: string
+          id?: string
+          order_id: string
+          rating: number
+          replied_at?: string | null
+          status?: string
+          template_id: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+          verified_purchase?: boolean
+        }
+        Update: {
+          accepted_terms?: boolean
+          admin_reply?: string
+          author_name?: string
+          body?: string
+          created_at?: string
+          id?: string
+          order_id?: string
+          rating?: number
+          replied_at?: string | null
+          status?: string
+          template_id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+          verified_purchase?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: true
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -435,6 +554,51 @@ export type Database = {
           label?: string
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      site_videos: {
+        Row: {
+          caption: string
+          created_at: string
+          id: string
+          is_published: boolean
+          placement: string
+          provider: string
+          sort_order: number
+          title: string
+          transcript: string
+          updated_at: string
+          url: string
+          video_id: string
+        }
+        Insert: {
+          caption?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          placement?: string
+          provider: string
+          sort_order?: number
+          title: string
+          transcript?: string
+          updated_at?: string
+          url: string
+          video_id: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          placement?: string
+          provider?: string
+          sort_order?: number
+          title?: string
+          transcript?: string
+          updated_at?: string
+          url?: string
+          video_id?: string
         }
         Relationships: []
       }
@@ -513,6 +677,8 @@ export type Database = {
           product_type: string
           rating: number
           requirements: string[]
+          review_avg: number
+          review_count: number
           sales_count: number
           slug: string
           sort_order: number
@@ -551,6 +717,8 @@ export type Database = {
           product_type?: string
           rating?: number
           requirements?: string[]
+          review_avg?: number
+          review_count?: number
           sales_count?: number
           slug: string
           sort_order?: number
@@ -589,6 +757,8 @@ export type Database = {
           product_type?: string
           rating?: number
           requirements?: string[]
+          review_avg?: number
+          review_count?: number
           sales_count?: number
           slug?: string
           sort_order?: number
@@ -636,6 +806,10 @@ export type Database = {
         Returns: boolean
       }
       next_invoice_number: { Args: never; Returns: string }
+      refresh_template_review_stats: {
+        Args: { _template_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
