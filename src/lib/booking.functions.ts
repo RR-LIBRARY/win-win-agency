@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { SETUP_FEE, findAddOns, findService } from "@/data/services";
 import { createOptionalUserClient, makeReference } from "./supabase-public.server";
 import { assertAdmin } from "./admin-guard.server";
+import { enforceRateLimit } from "./rate-limit.server";
 import { BOOKING_STATUSES, type BookingRow } from "./db-types";
 
 const bookingSchema = z.object({
@@ -23,6 +24,7 @@ export type BookingInput = z.infer<typeof bookingSchema>;
 export const submitBooking = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => bookingSchema.parse(data))
   .handler(async ({ data }) => {
+    enforceRateLimit("booking");
     const service = findService(data.serviceSlug);
     const pkg = service?.packages.find((p) => p.id === data.packageId);
     if (!service || !pkg) throw new Error("Unknown service or package");

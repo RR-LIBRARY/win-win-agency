@@ -244,3 +244,48 @@ describe("processRazorpayWebhook — other events", () => {
     expect(named("fulfil")).toHaveLength(2);
   });
 });
+
+describe("processRazorpayWebhook — spoof-resistant capture rules", () => {
+  it("never fulfils on a foreign-currency capture even when the numeric amount matches", async () => {
+    const { store, named } = memoryStore([ORDER]);
+    const body = capturedEvent({ currency: "USD" }); // 149900 cents ≠ ₹1499
+    const out = await processRazorpayWebhook({ rawBody: body, signature: await signed(body), eventId: "evt_usd", webhookSecret: SECRET, store });
+    expect(out.body).toMatchObject({ ok: false, result: "error", detail: "currency mismatch" });
+    expect(named("fulfil")).toHaveLength(0);
+    expect(named("finishEvent")[0]!.args[1]).toMatchObject({ status: "error" });
+  });
+
+  it("treats lower-case 'inr' as rupees", async () => {
+    const { store, named } = memoryStore([ORDER]);
+    const body = capturedEvent({ currency: "inr" });
+    const out = await processRazorpayWebhook({ rawBody: body, signature: await signed(body), eventId: "evt_inr", webhookSecret: SECRET, store });
+    expect(out.body.result).toBe("fulfilled");
+    expect(named("fulfil")).toHaveLength(1);
+  });
+
+  it("ignores an 'authorized' (not yet captured) payment instead of unlocking the order", async () => {
+    const { store, named } = memoryStore([ORDER]);
+    const body = capturedEvent({ status: "authorized" });
+    const out = await processRazorpayWebhook({ rawBody: body, signature: await signed(body), eventId: "evt_auth", webhookSecret: SECRET, store });
+    expect(out.body.result).toBe("ignored");
+    expect(named("fulfil")).toHaveLength(0);
+  });
+
+  it("refuses a capture whose amount is missing rather than trusting the order total", async () => {
+    const { store, named } = memoryStore([ORDER]);
+    const body = capturedEvent({ amount: undefined });
+    const out = await processRazorpayWebhook({ rawBody: body, signature: await signed(body), eventId: "evt_noamt", webhookSecret: SECRET, store });
+    expect(out.body).toMatchObject({ ok: false, result: "error" });
+    expect(named("fulfil")).toHaveLength(0);
+  });
+
+  it("refuses a zero or negative amount", async () => {
+    for (const amount of [0, -149900]) {
+      const { store, named } = memoryStore([ORDER]);
+      const body = capturedEvent({ amount });
+      const out = await processRazorpayWebhook({ rawBody: body, signature: await signed(body), eventId: `evt_${amount}`, webhookSecret: SECRET, store });
+      expect(out.body.ok).toBe(false);
+      expect(named("fulfil")).toHaveLength(0);
+    }
+  });
+});

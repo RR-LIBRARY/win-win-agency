@@ -4,8 +4,13 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createOptionalUserClient, makeReference } from "./supabase-public.server";
 import { assertAdmin } from "./admin-guard.server";
 import { resolveCoupon } from "./coupons.server";
+import { enforceRateLimit } from "./rate-limit.server";
 import { applyDiscount, resolvePrice } from "./payments/pricing";
 import { ORDER_STATUSES, type DeliverableRow, type OrderRow } from "./db-types";
+
+/** Unpaid orders one email may hold at once before we ask them to finish one. */
+export const MAX_OPEN_ORDERS_PER_EMAIL = 5;
+const OPEN_ORDER_WINDOW_HOURS = 24;
 
 const placeOrderSchema = z.object({
   templateSlug: z.string().min(1).max(120),
@@ -48,6 +53,7 @@ export type PlacedOrder = {
 export const placeOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => placeOrderSchema.parse(input))
   .handler(async ({ data }): Promise<PlacedOrder> => {
+    enforceRateLimit("placeOrder");
     const { supabase, userId } = await createOptionalUserClient();
 
     const { data: template, error: templateError } = await supabase
@@ -67,6 +73,24 @@ export const placeOrder = createServerFn({ method: "POST" })
     const amount = applyDiscount(resolved.price, coupon?.discount ?? 0);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const buyerEmail = data.email.toLowerCase();
+
+    // Database-level backstop that survives serverless cold starts: one email
+    // cannot pile up unpaid orders (a cheap HEAD count, no rows transferred).
+    const since = new Date(Date.now() - OPEN_ORDER_WINDOW_HOURS * 3_600_000).toISOString();
+    const { count: openCount, error: countError } = await supabaseAdmin
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .eq("buyer_email", buyerEmail)
+      .eq("status", "pending_payment")
+      .gte("created_at", since);
+    if (countError) throw new Error(countError.message);
+    if ((openCount ?? 0) >= MAX_OPEN_ORDERS_PER_EMAIL) {
+      throw new Error(
+        "You already have several unpaid orders. Please complete one of them from the link in your email, or contact us and we'll sort it out.",
+      );
+    }
+
     const reference = makeReference("WWT");
     const { data: inserted, error } = await supabaseAdmin
       .from("orders")

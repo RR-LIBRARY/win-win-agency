@@ -35,12 +35,16 @@ type PaymentEntity = {
   id: string;
   order_id?: string | null;
   amount?: number;
+  currency?: string;
   method?: string;
   status?: string;
   error_description?: string | null;
   error_reason?: string | null;
   notes?: Record<string, string> | Array<unknown> | null;
 };
+
+/** Every order in this store is priced in rupees; anything else is a spoof or a misconfiguration. */
+export const STORE_CURRENCY = "INR";
 
 type RefundEntity = { id: string; payment_id: string; amount?: number; status?: string };
 
@@ -115,6 +119,21 @@ export async function processRazorpayWebhook(input: {
           await input.store.finishEvent(rowId, { status: "ignored", error: "no payment entity" });
           return { status: 200, body: { ok: true, result: "ignored" } };
         }
+        // Only a captured rupee payment may unlock an order. An "authorized"
+        // payment is not money in the bank yet, and a foreign-currency amount
+        // would otherwise pass the numeric amount check with far less value.
+        if (payment.status && payment.status !== "captured") {
+          await input.store.finishEvent(rowId, { status: "ignored", error: `payment status ${payment.status}` });
+          return { status: 200, body: { ok: true, result: "ignored" } };
+        }
+        if (payment.currency && payment.currency.toUpperCase() !== STORE_CURRENCY) {
+          await input.store.finishEvent(rowId, { status: "error", error: `currency ${payment.currency} is not ${STORE_CURRENCY}` });
+          return { status: 200, body: { ok: false, result: "error", detail: "currency mismatch" } };
+        }
+        if (typeof payment.amount !== "number" || !Number.isFinite(payment.amount) || payment.amount <= 0) {
+          await input.store.finishEvent(rowId, { status: "error", error: "payment amount missing" });
+          return { status: 200, body: { ok: false, result: "error", detail: "amount missing" } };
+        }
         const order = await input.store.findOrder({
           razorpayOrderId: payment.order_id ?? orderEntity?.id ?? null,
           internalOrderId: notesOrderId(payment.notes) ?? notesOrderId(orderEntity?.notes ?? null),
@@ -123,7 +142,7 @@ export async function processRazorpayWebhook(input: {
           await input.store.finishEvent(rowId, { status: "error", error: "order not found" });
           return { status: 200, body: { ok: true, result: "order_not_found" } };
         }
-        const amountPaid = typeof payment.amount === "number" ? Math.round(payment.amount) / 100 : order.amount;
+        const amountPaid = Math.round(payment.amount) / 100;
         await input.store.fulfil(order.id, {
           paymentId: payment.id,
           razorpayOrderId: payment.order_id ?? orderEntity?.id ?? null,

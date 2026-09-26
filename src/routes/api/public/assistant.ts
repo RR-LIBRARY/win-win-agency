@@ -68,6 +68,11 @@ export const Route = createFileRoute("/api/public/assistant")({
         // The AI model is billed per call — only signed-in users may use it.
         if (!userId) return json(401, { error: "Please sign in to chat with the assistant." });
 
+        // Per-user + per-IP brake so one account cannot burn the AI budget in a loop.
+        const { rateLimitResponse } = await import("@/lib/rate-limit.server");
+        const limited = rateLimitResponse("assistant", request, userId);
+        if (limited) return limited;
+
         const url = new URL(request.url);
         const forwardedProto = request.headers.get("x-forwarded-proto");
         const origin = `${forwardedProto ?? url.protocol.replace(":", "")}://${request.headers.get("x-forwarded-host") ?? url.host}`;

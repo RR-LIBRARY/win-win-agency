@@ -5,6 +5,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createOptionalUserClient } from "./supabase-public.server";
 import { assertAdmin } from "./admin-guard.server";
 import { resolveCoupon } from "./coupons.server";
+import { enforceRateLimit } from "./rate-limit.server";
 import { applyDiscount, resolvePrice, toPaise } from "./payments/pricing";
 import { timingSafeEqualHex } from "./payments/signatures";
 import type { DeliverableRow, OrderRow } from "./db-types";
@@ -161,6 +162,7 @@ const orderAccessSchema = z.object({
 export const createRazorpayCheckout = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => orderAccessSchema.parse(input))
   .handler(async ({ data }) => {
+    enforceRateLimit("checkout");
     const { getRazorpayConfig, createRazorpayOrder } = await import("./payments/razorpay.server");
     const config = getRazorpayConfig();
     if (!config) throw new Error("Online payments are not enabled yet. Please use the bank transfer option.");
@@ -251,6 +253,7 @@ const verifySchema = orderAccessSchema.extend({
 export const verifyRazorpayPayment = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => verifySchema.parse(input))
   .handler(async ({ data }): Promise<{ state: "fulfilled" | "processing"; order: OrderView }> => {
+    enforceRateLimit("verifyPayment");
     const { getRazorpayConfig, fetchRazorpayPayment } = await import("./payments/razorpay.server");
     const { verifyPaymentSignature } = await import("./payments/signatures");
     const { fulfilOrder, recordPaymentFailure } = await import("./payments/fulfillment.server");
@@ -288,6 +291,10 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
       amountPaid = Math.round(payment.amount) / 100;
       if (payment.order_id && payment.order_id !== order.razorpay_order_id) {
         throw new Error("This payment does not belong to this order.");
+      }
+      if (payment.currency && payment.currency.toUpperCase() !== "INR") {
+        await recordPaymentFailure(supabaseAdmin, order.id, `Unexpected currency ${payment.currency}`);
+        throw new Error("This payment was made in a different currency and cannot be matched to your order.");
       }
       if (payment.status === "authorized") captured = false;
       else if (payment.status !== "captured") {
@@ -328,6 +335,7 @@ export const verifyRazorpayPayment = createServerFn({ method: "POST" })
 export const reconcileOrderPayment = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => orderAccessSchema.parse(input))
   .handler(async ({ data }): Promise<{ state: "fulfilled" | "pending"; order: OrderView }> => {
+    enforceRateLimit("verifyPayment");
     const { order, supabaseAdmin } = await loadOrderForCaller(data.orderId, data.accessToken);
     if (order.status !== "pending_payment" || !order.razorpay_order_id) {
       return {
@@ -360,6 +368,7 @@ export const getOrderView = createServerFn({ method: "GET" })
     z.object({ reference: z.string().min(4).max(40), accessToken: z.string().max(80).optional() }).parse(input),
   )
   .handler(async ({ data }): Promise<OrderView | null> => {
+    enforceRateLimit("orderLookup");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { userId } = await createOptionalUserClient();
     const { data: order } = await supabaseAdmin.from("orders").select("*").eq("reference", data.reference).maybeSingle();

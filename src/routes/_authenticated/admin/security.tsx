@@ -14,6 +14,7 @@ import {
   adminUpdateFinding,
 } from "@/lib/security.functions";
 import { isUnresolved, prioritize, summarize, type FindingStatus, type Verification } from "@/lib/security-triage";
+import { formatDateTime } from "@/components/site/StatusBadge";
 
 export const Route = createFileRoute("/_authenticated/admin/security")({
   head: () => ({

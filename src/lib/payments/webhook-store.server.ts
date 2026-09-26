@@ -49,8 +49,17 @@ export function createSupabaseWebhookStore(admin: SupabaseClient<Database>): Web
         if (data) return data;
       }
       if (internalOrderId && /^[0-9a-f-]{36}$/i.test(internalOrderId)) {
-        const { data } = await admin.from("orders").select("id, amount, status").eq("id", internalOrderId).maybeSingle();
-        if (data) return data;
+        // Notes fallback (checkout created before razorpay_order_id was saved).
+        // Refuse when the order is already tied to a *different* Razorpay order,
+        // so an event for order A can never unlock order B via its notes.
+        const { data } = await admin
+          .from("orders")
+          .select("id, amount, status, razorpay_order_id")
+          .eq("id", internalOrderId)
+          .maybeSingle();
+        if (data && (!data.razorpay_order_id || !razorpayOrderId || data.razorpay_order_id === razorpayOrderId)) {
+          return { id: data.id, amount: data.amount, status: data.status };
+        }
       }
       return null;
     },

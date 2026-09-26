@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createOptionalUserClient, createPublicClient } from "./supabase-public.server";
 import { assertAdmin } from "./admin-guard.server";
+import { enforceRateLimit } from "./rate-limit.server";
 import { timingSafeEqualHex } from "./payments/signatures";
 import { asExt, isMissingTableError, type ProductReviewRow, type ReviewStatus } from "./db-ext";
 import { canReviewOrder, displayAuthor, summariseRatings, validateReview, REVIEW_LIMITS, type RatingSummary } from "./review-rules";
@@ -188,6 +189,7 @@ const submitSchema = orderAccessSchema.extend({
 export const submitReview = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => submitSchema.parse(input))
   .handler(async ({ data }) => {
+    enforceRateLimit("review");
     const { order, admin, userId } = await loadOwnedOrder(data.orderId, data.accessToken);
     if (!canReviewOrder(order)) throw new Error("Reviews open once the order is paid.");
     const checked = validateReview(data);

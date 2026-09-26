@@ -39,10 +39,34 @@ export function BookingStatusBadge({ status }: { status: string }) {
   );
 }
 
+/**
+ * Dates are always shown in Indian time so the server (UTC on the host) and
+ * the visitor's browser print the identical string — otherwise an order placed
+ * just before midnight IST renders a different day on each side and React
+ * flags a hydration mismatch.
+ */
+export const DISPLAY_TIME_ZONE = "Asia/Kolkata";
+
 export function formatDate(value: string) {
-  return new Date(value).toLocaleDateString("en-IN", {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: DISPLAY_TIME_ZONE,
+  });
+}
+
+export function formatDateTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: DISPLAY_TIME_ZONE,
   });
 }

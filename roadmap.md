@@ -65,3 +65,8 @@ Constraint: Supabase free tier → no storage uploads; videos/docs are links onl
 
 - [ ] 2026-09-25 re-check: live order still fails with STORE-CONFIG; live webhook returns 503 (Razorpay secret missing in Vercel). Waiting on user Vercel env vars + Redeploy.
 - [x] Workspace move: re-link Parallel, Perplexity, GitHub; then push assistant change
+
+## 2026-09-25 14:42 UTC — workspace move #4 + deep harsh-parameter test (in progress)
+- [x] 14:45 UTC: Parallel + Perplexity re-linked (std_01m3cg9pj3ehkr0hdrhbb1f3sh, std_01m3cgcehrfvrtb9kmn7s3g04m); Supabase "Win Win Agency" verified connected. GitHub: re-link before next push
+- [ ] Deep red-team test: anon/authenticated/IDOR/webhook/licence/rate-limit/CSRF/RLS/grants on preview (all secrets present) + live headers
+- [ ] Fix every finding, add harsh unit tests, push to GitHub

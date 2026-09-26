@@ -28,6 +28,11 @@ export const Route = createFileRoute("/api/public/license/verify")({
     handlers: {
       OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
       POST: async ({ request }) => {
+        const { rateLimitResponse } = await import("@/lib/rate-limit.server");
+        const limited = rateLimitResponse("licenseVerify", request);
+        if (limited) {
+          return json({ valid: false, reason: "rate_limited", retry_after: limited.headers.get("Retry-After") }, 429);
+        }
         let parsed: z.infer<typeof bodySchema>;
         try {
           parsed = bodySchema.parse(await request.json());

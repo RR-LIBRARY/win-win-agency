@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createOptionalUserClient } from "./supabase-public.server";
 import { assertAdmin } from "./admin-guard.server";
 import { resolveCoupon } from "./coupons.server";
+import { enforceRateLimit } from "./rate-limit.server";
 import { asExt } from "./db-ext";
 
 // ---------- contact messages ----------
@@ -18,6 +19,7 @@ const messageSchema = z.object({
 export const sendContactMessage = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => messageSchema.parse(input))
   .handler(async ({ data }) => {
+    enforceRateLimit("contact");
     const { supabase } = await createOptionalUserClient();
     const { error } = await supabase.from("contact_messages").insert({
       name: data.name,
@@ -87,6 +89,7 @@ export const checkCoupon = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
+    enforceRateLimit("couponCheck");
     const { supabase } = await createOptionalUserClient();
     const { data: template } = await supabase
       .from("templates")

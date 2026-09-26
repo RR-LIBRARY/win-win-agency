@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { adminDeleteCoupon, adminListCoupons, adminSaveCoupon } from "@/lib/inbox.functions";
+import { formatDate } from "@/components/site/StatusBadge";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons")({
   head: () => ({
