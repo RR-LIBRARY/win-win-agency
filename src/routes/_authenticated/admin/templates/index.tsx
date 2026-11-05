@@ -91,6 +91,9 @@ function AdminTemplatesPage() {
                           <ExternalLink className="h-2.5 w-2.5" /> {platform.label}
                         </span>
                       ) : null}
+                      {!external && !template.has_delivery ? (
+                        <span className="ml-2 rounded-full bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold text-destructive">No delivery link — buyers get nothing</span>
+                      ) : null}
                     </p>
                     <p className="truncate text-xs text-muted-foreground">
                       /store/{template.slug} · {productTypeShort(template.product_type)} · {categoryLabel(template.category)} · {template.sales_count} sold · order {template.sort_order}

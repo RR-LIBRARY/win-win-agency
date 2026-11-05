@@ -67,7 +67,7 @@ export const templateQuery = (slug: string) =>
 
 export const adminListTemplates = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<TemplateRow[]> => {
+  .handler(async ({ context }): Promise<Array<TemplateRow & { has_delivery: boolean }>> => {
     await assertAdmin(context.supabase, context.userId);
     const { data, error } = await context.supabase
       .from("templates")
@@ -75,7 +75,15 @@ export const adminListTemplates = createServerFn({ method: "GET" })
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const { data: deliverables } = await context.supabase
+      .from("template_deliverables")
+      .select("template_id, duplicate_url, download_url, download_path, access_url");
+    const ready = new Set(
+      (deliverables ?? [])
+        .filter((d) => [d.duplicate_url, d.download_url, d.download_path, d.access_url].some((v) => typeof v === "string" && v.trim() !== ""))
+        .map((d) => d.template_id),
+    );
+    return (data ?? []).map((t) => ({ ...t, has_delivery: ready.has(t.id) }));
   });
 
 export const adminGetTemplate = createServerFn({ method: "GET" })
