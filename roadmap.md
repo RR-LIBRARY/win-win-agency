@@ -26,7 +26,7 @@ Constraint: Supabase free tier → no storage uploads; videos/docs are links onl
 - [x] Push to GitHub main via scripts/github-sync.py
 
 ## Goal (09:29 UTC) — end-to-end order flow + premium UI + Razorpay
-- [ ] Razorpay: explain keys needed (Key ID, Key Secret, Webhook Secret), open the secure form; wire secrets into existing razorpay.server.ts; webhook URL for the dashboard; test-mode verification
+- [x] Razorpay: explain keys needed (Key ID, Key Secret, Webhook Secret), open the secure form; wire secrets into existing razorpay.server.ts; webhook URL for the dashboard; test-mode verification
 - [ ] Act as client: browse → product → checkout → order page (bank transfer + Razorpay test) → review link; screenshots desktop + mobile
 - [ ] Act as admin: sign in as naveenbharatprism@gmail.com → orders → mark paid/delivered → licence/delivery → moderate review → reply; verify buyer sees delivery + docs
 - [ ] Premium UI pass: hero, store cards, product page, checkout, order page, admin polish; motion respecting reduced-motion; AA contrast; Axe 0 serious/critical
@@ -34,7 +34,7 @@ Constraint: Supabase free tier → no storage uploads; videos/docs are links onl
 
 ## Ready (next)
 - [x] Supabase linked + migration applied; checkout verified live (order row + Razorpay order created in test mode)
-- [ ] User adds Razorpay keys (test first, then live) and sets the webhook URL in the Razorpay dashboard
+- [x] User adds Razorpay keys (test first, then live) and sets the webhook URL in the Razorpay dashboard
 - [ ] Email/WhatsApp notifications on paid order + delivery (needs an email provider connection)
 - [x] Assistant knowledge: include product doc titles + review summary
 - [ ] Replace placeholder prices, contact details, GSTIN, portfolio screenshots and copy with real data
@@ -70,3 +70,5 @@ Constraint: Supabase free tier → no storage uploads; videos/docs are links onl
 - [x] 14:45 UTC: Parallel + Perplexity re-linked (std_01m3cg9pj3ehkr0hdrhbb1f3sh, std_01m3cgcehrfvrtb9kmn7s3g04m); Supabase "Win Win Agency" verified connected. GitHub: re-link before next push
 - [ ] Deep red-team test: anon/authenticated/IDOR/webhook/licence/rate-limit/CSRF/RLS/grants on preview (all secrets present) + live headers
 - [ ] Fix every finding, add harsh unit tests, push to GitHub
+
+- [x] 2026-11-05: Razorpay Test Mode payment verified end-to-end (order paid, invoice issued, signed webhook accepted, unsigned rejected); all 12 admin pages verified
